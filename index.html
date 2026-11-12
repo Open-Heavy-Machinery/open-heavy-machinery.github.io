@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Heavy Machinery — Open-Source HIL/SIL & Control Infrastructure</title>
+  <meta name="description" content="Open, auditable Hardware-in-the-Loop (HIL), Software-in-the-Loop (SIL) and embedded control infrastructure for heavy-duty industrial and marine machinery. No engine required.">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f0883e'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='14' font-weight='700' text-anchor='middle' fill='%230d1117'%3EOC%3C/text%3E%3C/svg%3E">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Open Heavy Machinery">
+  <meta property="og:title" content="Open Heavy Machinery — Open-Source HIL/SIL & Control Infrastructure">
+  <meta property="og:description" content="Open, auditable plant simulation and HIL tooling for industrial, off-highway and marine powertrain control. No engine required.">
+  <meta property="og:image" content="/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #f0883e;
+      --accent-dim: rgba(240, 136, 62, 0.15);
+      --code-bg: #010409;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      padding: 2rem 1.5rem;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--accent);
+      color: var(--bg);
+      padding: 0.5rem 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85rem;
+      z-index: 10;
+    }
+
+    .skip-link:focus {
+      left: 1rem;
+      top: 1rem;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .org-tag {
+      display: inline-block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.04em;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 680px;
+    }
+
+    nav {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      background: var(--surface);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    nav a:hover,
+    nav a:focus-visible {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    nav a.primary {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    section {
+      margin-bottom: 2.75rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: var(--text);
+    }
+
+    h2 .slashes {
+      color: var(--accent);
+    }
+
+    p {
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .card-title {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .card-title:hover,
+    .card-title:focus-visible {
+      color: var(--accent);
+    }
+
+    .badge {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 12px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .note {
+      font-size: 0.9rem;
+      color: var(--muted);
+      border-left: 2px solid var(--border);
+      padding-left: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .spec-pill {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+    }
+
+    .spec-pill.planned {
+      border-style: dashed;
+    }
+
+    .roadmap {
+      list-style: none;
+      border-left: 1px solid var(--border);
+      padding-left: 0;
+    }
+
+    .roadmap li {
+      position: relative;
+      padding-left: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .roadmap li::before {
+      content: "";
+      position: absolute;
+      left: -0.3rem;
+      top: 0.55rem;
+      width: 0.55rem;
+      height: 0.55rem;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .roadmap li.done::before {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .roadmap .ver {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: var(--text);
+      font-size: 0.85rem;
+    }
+
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .principle-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.1rem;
+    }
+
+    .principle-item h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+
+    .principle-item p {
+      font-size: 0.88rem;
+      margin-bottom: 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: underline;
+    }
+
+    footer a:hover,
+    footer a:focus-visible {
+      color: var(--text);
+    }
+
+    .disclaimer {
+      flex-basis: 100%;
+      font-size: 0.78rem;
+      color: #6e7681;
+      border-top: 1px solid var(--border);
+      padding-top: 0.85rem;
+      margin-top: 0.25rem;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="container">
+    <header>
+      <div class="org-tag">OPEN-SOURCE HEAVY-DUTY INFRASTRUCTURE</div>
+      <h1>Open Heavy Machinery</h1>
+      <p class="subtitle">
+        Deterministic plant simulation, Hardware-in-the-Loop (HIL), and embedded control tooling for industrial, off-highway, and marine powertrain systems.
+      </p>
+      <nav aria-label="Primary">
+        <a class="primary" href="https://github.com/Open-Heavy-Machinery/open-crank" target="_blank" rel="noopener noreferrer">Watch open-crank</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="https://github.com/Open-Heavy-Machinery" target="_blank" rel="noopener noreferrer">GitHub Organization</a>
+        <a href="https://github.com/Open-Heavy-Machinery/open-crank/issues" target="_blank" rel="noopener noreferrer">Issues</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section aria-labelledby="mission">
+        <h2 id="mission"><span class="slashes" aria-hidden="true">// </span>Mission</h2>
+        <p>
+          Developing embedded control software for heavy machinery is bottlenecked by physical access. Real engines, dynamometer cells, and proprietary HIL rigs are expensive and inaccessible to independent engineers, researchers, and small teams.
+        </p>
+        <p>
+          Open Heavy Machinery builds open, auditable simulation and validation tools so control firmware can be developed, tested, and broken in CI or on a bench before touching physical iron.
+        </p>
+      </section>
+
+      <section aria-labelledby="projects">
+        <h2 id="projects"><span class="slashes" aria-hidden="true">// </span>Active Projects</h2>
+        <div class="card">
+          <div class="card-header">
+            <a class="card-title" href="https://github.com/Open-Heavy-Machinery/open-crank" target="_blank" rel="noopener noreferrer">
+              open-crank
+            </a>
+            <span class="badge">PRE-ALPHA · v0.1 TARGET</span>
+          </div>
+          <p>
+            Open-source HIL/SIL heavy-duty engine plant simulator for critical embedded systems. Speaks SAE J1939 over CAN, decouples deterministic plant physics from I/O and time backends, and targets both soft real-time emulators (Renode, QEMU) and hard real-time FPGA rigs.
+          </p>
+          <p class="note">
+            Honest status: the repository currently holds a README and a license. Nothing runs yet. v0.1 is the first milestone with something to execute.
+          </p>
+          <div class="specs">
+            <span class="spec-pill">C11 Core</span>
+            <span class="spec-pill">SAE J1939 / vcan</span>
+            <span class="spec-pill">Renode / QEMU</span>
+            <span class="spec-pill">Apache-2.0</span>
+          </div>
+          <div class="specs">
+            <span class="spec-pill planned">Plant: Liebherr D936L A6 — v0.1</span>
+            <span class="spec-pill planned">Plant: MAN B&amp;W 9G95ME-C10.6 — v0.5</span>
+            <span class="spec-pill planned">FPGA HIL backend — v0.4</span>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="roadmap">
+        <h2 id="roadmap"><span class="slashes" aria-hidden="true">// </span>Roadmap</h2>
+        <p>
+          Scope is deliberately narrow at the start. Each milestone is small enough to finish and big enough to be useful on its own.
+        </p>
+        <ul class="roadmap">
+          <li>
+            <span class="ver">v0.1</span> — Vertical slice: mean-value model of the Liebherr D936L A6, one ECU in Renode, vcan, six PGNs, dashboard, one CI test that closes a speed-control loop.
+          </li>
+          <li>
+            <span class="ver">v0.2</span> — Aftertreatment: DOC / DPF / SCR with soot and DEF dosing, regeneration request logic.
+          </li>
+          <li>
+            <span class="ver">v0.3</span> — Fault injection: sensor open / short / plausibility, CAN dropout, limp-home paths.
+          </li>
+          <li>
+            <span class="ver">v0.4</span> — HIL: FPGA time backend, real crank and cam waveforms, jitter measurement.
+          </li>
+          <li>
+            <span class="ver">v0.5</span> — Second plant: MAN B&amp;W 9G95ME-C10.6, propeller load, ME-style electronic control, PMS scenario. Refactor whatever the second plant breaks.
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="principles">
+        <h2 id="principles"><span class="slashes" aria-hidden="true">// </span>Engineering Principles</h2>
+        <div class="principles">
+          <div class="principle-item">
+            <h3>SIL/HIL Parity</h3>
+            <p>The plant model core never knows whether it is running in a CI pipeline or on an FPGA rig.</p>
+          </div>
+          <div class="principle-item">
+            <h3>General Abstractions</h3>
+            <p>Architectures will be validated across radically different plants, from 4-stroke crane diesels to 60 MW 2-stroke marine engines.</p>
+          </div>
+          <div class="principle-item">
+            <h3>Permissive &amp; Auditable</h3>
+            <p>Licensed under Apache-2.0, including the patent grant. Protocol implementations are original, readable, and open to inspection.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Open Heavy Machinery · <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">Apache-2.0</a></span>
+      <span><a href="https://github.com/Open-Heavy-Machinery" target="_blank" rel="noopener noreferrer">github.com/Open-Heavy-Machinery</a></span>
+      <span class="disclaimer">
+        Not affiliated with Liebherr or MAN Energy Solutions. Engine designations are used nominatively to identify the modelled plants. SAE J1939 is a published standard and is not redistributed here.
+      </span>
+    </footer>
+  </div>
+</body>
+</html>
