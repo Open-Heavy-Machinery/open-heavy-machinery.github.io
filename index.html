@@ -3,424 +3,814 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Open Heavy Machinery — Open-Source HIL/SIL & Control Infrastructure</title>
-  <meta name="description" content="Open, auditable Hardware-in-the-Loop (HIL), Software-in-the-Loop (SIL) and embedded control infrastructure for heavy-duty industrial and marine machinery. No engine required.">
+  <meta name="color-scheme" content="dark">
+  <title>Open Heavy Machinery · open-crank, a heavy-duty diesel that answers back</title>
+  <meta name="description" content="open-crank simulates a heavy-duty diesel engine, its engine ECU and its hydraulic load, and speaks SAE J1939 over CAN. Develop and test machine-controller firmware on a laptop and in CI, then take the same C source to an emulator and a real board.">
   <meta name="theme-color" content="#0d1117">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f0883e'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='14' font-weight='700' text-anchor='middle' fill='%230d1117'%3EOC%3C/text%3E%3C/svg%3E">
+  <link rel="canonical" href="https://open-heavy-machinery.github.io/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d1117'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23f0883e' stroke-width='3'/%3E%3Ccircle cx='16' cy='9.5' r='3' fill='%23f0883e'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23f0883e'/%3E%3C/svg%3E">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Open Heavy Machinery">
-  <meta property="og:title" content="Open Heavy Machinery — Open-Source HIL/SIL & Control Infrastructure">
-  <meta property="og:description" content="Open, auditable plant simulation and HIL tooling for industrial, off-highway and marine powertrain control. No engine required.">
-  <meta property="og:image" content="/og-card.png">
+  <meta property="og:url" content="https://open-heavy-machinery.github.io/">
+  <meta property="og:title" content="open-crank: a heavy-duty diesel that answers back">
+  <meta property="og:description" content="Open-source engine plant, simulated engine ECU and SAE J1939 bench for developing machine controllers, from a laptop to a real board. No engine required.">
+  <meta property="og:image" content="https://open-heavy-machinery.github.io/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="open-crank: engine speed recovering from a hydraulic load step, with J1939 frames">
   <meta name="twitter:card" content="summary_large_image">
 
   <style>
     :root {
       --bg: #0d1117;
       --surface: #161b22;
+      --surface-2: #1c2128;
       --border: #30363d;
+      --hairline: #21262d;
       --text: #e6edf3;
       --muted: #8b949e;
       --accent: #f0883e;
-      --accent-dim: rgba(240, 136, 62, 0.15);
+      --accent-dim: rgba(240, 136, 62, 0.14);
       --code-bg: #010409;
+      --ok: #3fb950;
+      --data-speed: #e06c24;
+      --data-load: #3987e5;
+      --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      --wide: 1120px;
+      --prose: 68ch;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
     body {
-      background-color: var(--bg);
+      background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-family: var(--sans);
       line-height: 1.6;
-      padding: 2rem 1.5rem;
+      -webkit-font-smoothing: antialiased;
     }
+
+    a { color: var(--accent); text-underline-offset: 3px; }
+    a:hover { color: #ffa657; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 
     .skip-link {
-      position: absolute;
-      left: -9999px;
-      top: 0;
-      background: var(--accent);
-      color: var(--bg);
-      padding: 0.5rem 1rem;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.85rem;
-      z-index: 10;
+      position: absolute; left: -9999px; top: 0; z-index: 20;
+      background: var(--accent); color: var(--bg);
+      padding: 0.5rem 1rem; font-family: var(--mono); font-size: 0.85rem;
     }
+    .skip-link:focus { left: 1rem; top: 1rem; }
 
-    .skip-link:focus {
-      left: 1rem;
-      top: 1rem;
-    }
+    .wrap { max-width: var(--wide); margin: 0 auto; padding: 0 1.5rem; }
+    .hero .wrap > *, .why > *, .arch > *, .start > * { min-width: 0; }
+    @media (max-width: 480px) { .wrap { padding: 0 1rem; } .eyebrow .long { display: none; } }
 
-    .container {
-      max-width: 820px;
-      margin: 0 auto;
+    /* ---------- top bar ---------- */
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(13, 17, 23, 0.86);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--hairline);
     }
+    .topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 56px; }
+    .brand { display: flex; align-items: center; gap: 0.6rem; color: var(--text); text-decoration: none; font-weight: 600; letter-spacing: -0.01em; }
+    .brand:hover { color: var(--text); }
+    .brand svg { flex: none; }
+    .topnav { display: flex; gap: 0.25rem; }
+    .topnav a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      padding: 0.35rem 0.65rem; border-radius: 6px;
+    }
+    .topnav a:hover { color: var(--text); background: var(--surface); }
+    @media (max-width: 720px) { .topnav a:not(.gh) { display: none; } }
 
-    header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 2rem;
-      margin-bottom: 2.5rem;
+    /* ---------- hero ---------- */
+    .hero {
+      position: relative;
+      padding: 4.5rem 0 4rem;
+      border-bottom: 1px solid var(--hairline);
+      background:
+        radial-gradient(ellipse 60% 70% at 85% 30%, rgba(240, 136, 62, 0.08), transparent 70%),
+        linear-gradient(var(--bg), var(--bg));
+      overflow: hidden;
     }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(139, 148, 158, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(139, 148, 158, 0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: radial-gradient(ellipse 80% 90% at 70% 40%, #000 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 90% at 70% 40%, #000 30%, transparent 75%);
+    }
+    .hero .wrap { position: relative; display: grid; grid-template-columns: 1.05fr 1fr; gap: 3rem; align-items: center; }
+    @media (max-width: 960px) { .hero .wrap { grid-template-columns: 1fr; gap: 2.5rem; } .hero { padding-top: 3rem; } }
 
-    .org-tag {
-      display: inline-block;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.8rem;
-      color: var(--accent);
-      background: var(--accent-dim);
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      margin-bottom: 1rem;
-      letter-spacing: 0.04em;
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.02em;
+      color: var(--accent); background: var(--accent-dim);
+      border: 1px solid rgba(240, 136, 62, 0.35);
+      padding: 0.25rem 0.65rem; border-radius: 999px; margin-bottom: 1.4rem;
     }
+    .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(240, 136, 62, 0.2); }
 
     h1 {
-      font-size: 2.2rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.75rem;
+      font-size: clamp(2.3rem, 5.2vw, 3.6rem);
+      line-height: 1.06; letter-spacing: -0.035em; font-weight: 700;
+      margin-bottom: 1.25rem;
     }
+    h1 em { font-style: normal; color: var(--accent); }
+    .lede { font-size: 1.14rem; color: #c9d1d9; max-width: 36rem; margin-bottom: 1.9rem; }
+    .lede strong { color: var(--text); font-weight: 600; }
 
-    .subtitle {
-      font-size: 1.15rem;
-      color: var(--muted);
-      max-width: 680px;
+    .cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.8rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.95rem; font-weight: 600; text-decoration: none;
+      padding: 0.68rem 1.1rem; border-radius: 8px; border: 1px solid var(--border);
+      color: var(--text); background: var(--surface);
+      transition: border-color 0.15s, background 0.15s;
     }
+    .btn:hover { color: var(--text); border-color: #8b949e; }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #1b0f05; }
+    .btn.primary:hover { background: #ffa657; border-color: #ffa657; color: #1b0f05; }
 
-    nav {
-      margin-top: 1.5rem;
-      display: flex;
-      gap: 1.25rem;
-      flex-wrap: wrap;
+    .facts { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; list-style: none; font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+    .facts li::before { content: "▸ "; color: var(--accent); }
+
+    /* terminal */
+    .term {
+      background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px;
+      box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(240, 136, 62, 0.04);
+      overflow: hidden; min-width: 0;
     }
-
-    nav a {
-      color: var(--text);
-      text-decoration: none;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.9rem;
-      border: 1px solid var(--border);
-      padding: 0.45rem 0.9rem;
-      border-radius: 6px;
-      background: var(--surface);
-      transition: border-color 0.2s, color 0.2s;
+    .term-bar {
+      display: flex; align-items: center; gap: 0.45rem;
+      padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--hairline);
+      font-family: var(--mono); font-size: 0.75rem; color: var(--muted);
     }
+    .term-bar i { width: 10px; height: 10px; border-radius: 50%; background: #30363d; display: inline-block; }
+    .term-bar span { margin-left: 0.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .frames { list-style: none; padding: 0.7rem 0; font-family: var(--mono); font-size: 0.8rem; line-height: 1.45; overflow-x: auto; }
+    .frames li { display: grid; grid-template-columns: 6.4em 1fr; column-gap: 1em; row-gap: 0.12rem; padding: 0.42rem 1.1rem; }
+    .frames li:hover { background: rgba(240, 136, 62, 0.06); }
+    .frames .id { color: var(--muted); }
+    .frames .bytes { color: #c9d1d9; white-space: nowrap; }
+    .frames .bytes b { color: var(--accent); font-weight: 600; }
+    .frames .msg { grid-column: 2; color: var(--text); font-weight: 600; font-family: var(--sans); font-size: 0.84rem; }
+    .frames .msg small { font-weight: 400; color: var(--muted); font-size: 1em; }
+    .frames .msg small::before { content: " · "; }
+    .frames .dir { color: var(--muted); font-weight: 400; }
+    .term-foot { border-top: 1px solid var(--hairline); padding: 0.65rem 1rem; font-size: 0.8rem; color: var(--muted); }
 
-    nav a:hover,
-    nav a:focus-visible {
-      border-color: var(--accent);
-      color: var(--accent);
+    /* ---------- sections ---------- */
+    section { padding: 5rem 0; border-bottom: 1px solid var(--hairline); }
+    section:last-of-type { border-bottom: 0; }
+    .kicker { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); letter-spacing: 0.04em; margin-bottom: 0.7rem; }
+    h2 { font-size: clamp(1.7rem, 3.4vw, 2.3rem); line-height: 1.15; letter-spacing: -0.025em; margin-bottom: 1rem; max-width: 30ch; }
+    .intro { color: var(--muted); font-size: 1.05rem; max-width: var(--prose); margin-bottom: 2.6rem; }
+    h3 { font-size: 1.02rem; letter-spacing: -0.01em; margin-bottom: 0.45rem; }
+    p { color: var(--muted); }
+    code { font-family: var(--mono); font-size: 0.88em; color: #c9d1d9; background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 4px; padding: 0.05em 0.35em; }
+
+    /* why */
+    .why { display: grid; grid-template-columns: 1.1fr 1fr; gap: 4rem; align-items: center; }
+    .why p { font-size: 1.05rem; margin-bottom: 1rem; }
+    .why p:last-child { margin-bottom: 0; }
+    .why .quote {
+      border-left: 2px solid var(--accent); padding: 0.2rem 0 0.2rem 1.3rem;
+      font-size: clamp(1.4rem, 2.6vw, 1.9rem); line-height: 1.3; color: var(--text); letter-spacing: -0.02em; font-weight: 600;
     }
+    .why .quote small { display: block; margin-top: 0.9rem; font-size: 0.92rem; font-weight: 400; color: var(--muted); letter-spacing: 0; }
+    @media (max-width: 860px) { .why { grid-template-columns: 1fr; gap: 2rem; } }
 
-    nav a.primary {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--accent-dim);
-    }
-
-    section {
-      margin-bottom: 2.75rem;
-    }
-
-    h2 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      color: var(--text);
-    }
-
-    h2 .slashes {
-      color: var(--accent);
-    }
-
-    p {
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-
+    /* feature grid */
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 620px) { .grid { grid-template-columns: 1fr; } }
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.35rem 1.35rem 1.2rem; display: flex; flex-direction: column;
     }
+    .card .ico { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-dim); color: var(--accent); margin-bottom: 0.95rem; }
+    .card p { font-size: 0.93rem; flex: 1; }
+    .card .where { margin-top: 1rem; font-family: var(--mono); font-size: 0.76rem; color: var(--muted); }
+    .card .where a { color: var(--muted); text-decoration: none; border-bottom: 1px dotted var(--border); }
+    .card .where a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.75rem;
-      flex-wrap: wrap;
-      gap: 0.5rem;
+    /* chart */
+    .figure { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.6rem 1.6rem 1.2rem; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); border-radius: 8px; overflow: hidden; margin-bottom: 1.6rem; }
+    .stat { background: var(--surface); padding: 0.9rem 1rem; }
+    .stat .value { font-family: var(--mono); font-size: 1.45rem; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
+    .stat .label { font-size: 0.82rem; color: var(--muted); }
+    @media (max-width: 760px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+    .chart { position: relative; }
+    .scroll-hint { display: none; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.6rem; }
+    @media (max-width: 700px) {
+      .chart, .diagram { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .chart-svg { min-width: 640px; }
+      .diagram svg { min-width: 560px; }
+      .scroll-hint { display: block; }
+      .figure { padding: 1rem; }
     }
+    .chart-svg { width: 100%; height: auto; display: block; overflow: visible; }
+    .chart-svg .grid { stroke: var(--hairline); stroke-width: 1; }
+    .chart-svg .tick { fill: var(--muted); font: 11px var(--mono); }
+    .chart-svg .panel-title { fill: var(--text); font: 600 12px var(--sans); }
+    .chart-svg .band { fill: rgba(57, 135, 229, 0.06); }
+    .chart-svg .band-label { fill: var(--muted); font: 11px var(--sans); }
+    .chart-svg .ref { stroke: #484f58; stroke-width: 1; }
+    .chart-svg .line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+    .chart-svg .line-speed { stroke: var(--data-speed); }
+    .chart-svg .line-load { stroke: var(--data-load); }
+    .chart-svg .mark { stroke: var(--surface); stroke-width: 2; }
+    .chart-svg .mark-speed { fill: var(--data-speed); }
+    .chart-svg .anno { fill: var(--text); font: 12px var(--sans); }
+    .chart-svg .anno-muted { fill: var(--muted); }
+    .chart-svg .bracket { fill: none; stroke: var(--muted); stroke-width: 1; }
+    .chart-svg .hover { opacity: 0; transition: opacity 0.1s; }
+    .chart-svg .cross { stroke: var(--muted); stroke-width: 1; }
+    .chart-svg .hdot { stroke: var(--surface); stroke-width: 2; }
+    .chart-svg .hdot-speed { fill: var(--data-speed); }
+    .chart-svg .hdot-load { fill: var(--data-load); }
+    .chart-svg .hit { fill: transparent; cursor: crosshair; }
+    .tip {
+      position: absolute; pointer-events: none; opacity: 0;
+      background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
+      padding: 0.45rem 0.65rem; font: 12px/1.5 var(--mono); color: var(--text);
+      white-space: nowrap; transform: translate(-50%, -110%); transition: opacity 0.1s;
+    }
+    .tip .k { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 0.4rem; }
+    .caption { margin-top: 1rem; font-size: 0.86rem; color: var(--muted); max-width: var(--prose); }
+    details.data { margin-top: 1rem; font-size: 0.86rem; }
+    details.data summary { cursor: pointer; color: var(--muted); }
+    details.data summary:hover { color: var(--text); }
+    table { border-collapse: collapse; margin-top: 0.8rem; font-family: var(--mono); font-size: 0.8rem; }
+    th, td { text-align: right; padding: 0.3rem 0.9rem 0.3rem 0; border-bottom: 1px solid var(--hairline); color: var(--muted); }
+    th { color: var(--text); font-weight: 600; }
+    td:last-child, th:last-child { text-align: left; }
 
-    .card-title {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--text);
-      text-decoration: none;
-    }
+    /* architecture */
+    .arch { display: grid; grid-template-columns: 1.55fr 1fr; gap: 1.5rem; align-items: stretch; }
+    .levels { align-content: stretch; }
+    @media (max-width: 960px) { .arch { grid-template-columns: 1fr; } }
+    .diagram { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; }
+    .diagram svg { width: 100%; height: auto; display: block; }
+    .diagram .box { fill: var(--surface-2); stroke: var(--border); }
+    .diagram .box-dut { fill: rgba(240, 136, 62, 0.08); stroke: rgba(240, 136, 62, 0.6); }
+    .diagram .frame { fill: none; stroke: #484f58; stroke-dasharray: 4 4; }
+    .diagram .t { fill: var(--text); font: 600 15px var(--sans); }
+    .diagram .s { fill: var(--muted); font: 12.5px var(--sans); }
+    .diagram .m { fill: var(--muted); font: 12.5px var(--mono); }
+    .diagram .mh { fill: var(--accent); font: 600 12.5px var(--mono); }
+    .diagram .bus { stroke: #484f58; stroke-width: 6; stroke-linecap: round; }
+    .diagram .arrow { stroke: #8b949e; stroke-width: 1.5; fill: none; }
+    .diagram .arrow-int { stroke: #6e7681; stroke-width: 1.25; fill: none; }
 
-    .card-title:hover,
-    .card-title:focus-visible {
-      color: var(--accent);
-    }
+    .levels { display: grid; gap: 1rem; }
+    .level { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.15rem 1.25rem; }
+    .level h3 { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+    .level p { font-size: 0.92rem; }
+    .chip { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; padding: 0.12rem 0.5rem; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
+    .chip.now { color: var(--ok); border-color: rgba(63, 185, 80, 0.5); }
+    .chip.now::before { content: "● "; }
 
-    .badge {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.75rem;
-      padding: 0.15rem 0.55rem;
-      border-radius: 12px;
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      white-space: nowrap;
-    }
+    .zones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; }
+    @media (max-width: 760px) { .zones { grid-template-columns: 1fr; } }
+    .zone { border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; }
+    .zone h3 { font-family: var(--mono); font-size: 0.95rem; color: var(--accent); }
+    .zone p { font-size: 0.88rem; }
+    .zone-rule { margin-top: 1rem; font-size: 0.9rem; color: var(--muted); max-width: var(--prose); }
 
-    .note {
-      font-size: 0.9rem;
-      color: var(--muted);
-      border-left: 2px solid var(--border);
-      padding-left: 0.85rem;
-      margin-top: 1rem;
+    /* quick start */
+    .start { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; align-items: center; }
+    @media (max-width: 960px) { .start { grid-template-columns: 1fr; } }
+    .code { position: relative; background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; }
+    .code-bar { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.6rem 0.5rem 1rem; border-bottom: 1px solid var(--hairline); font: 0.75rem var(--mono); color: var(--muted); }
+    .code pre { margin: 0; padding: 1.1rem 1.2rem; overflow-x: auto; font: 0.85rem/1.7 var(--mono); color: #c9d1d9; }
+    .code .c { color: #6e7681; }
+    .code .p { color: var(--accent); user-select: none; }
+    .copy {
+      font: 0.75rem var(--mono); color: var(--muted); background: var(--surface);
+      border: 1px solid var(--border); border-radius: 6px; padding: 0.25rem 0.55rem; cursor: pointer;
     }
+    .copy:hover { color: var(--text); border-color: #8b949e; }
+    .checklist { list-style: none; margin-top: 1.2rem; }
+    .checklist li { padding-left: 1.6rem; position: relative; margin-bottom: 0.55rem; color: var(--muted); font-size: 0.95rem; }
+    .checklist li::before { content: "→"; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
 
-    .specs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1rem;
+    /* roadmap */
+    .timeline { list-style: none; position: relative; margin-left: 0.4rem; }
+    .timeline::before { content: ""; position: absolute; left: 0; top: 0.6rem; bottom: 0.6rem; width: 1px; background: var(--border); }
+    .timeline > li { position: relative; padding: 0 0 2rem 2rem; }
+    .timeline > li:last-child { padding-bottom: 0; }
+    .timeline > li::before {
+      content: ""; position: absolute; left: -6px; top: 0.35rem;
+      width: 13px; height: 13px; border-radius: 50%;
+      background: var(--bg); border: 2px solid var(--border);
     }
+    .timeline > li.current::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(240, 136, 62, 0.2); }
+    .tl-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.8rem; margin-bottom: 0.3rem; }
+    .tl-ver { font-family: var(--mono); font-weight: 700; color: var(--text); }
+    .tl-title { font-weight: 600; color: var(--text); }
+    .timeline p { font-size: 0.95rem; max-width: 78ch; }
+    .pending { list-style: none; margin-top: 0.6rem; font-size: 0.88rem; }
+    .pending li { color: var(--muted); padding-left: 1.4rem; position: relative; margin-bottom: 0.2rem; }
+    .pending li::before { content: "○"; position: absolute; left: 0; color: var(--accent); }
+    .pending li.done::before { content: "✓"; color: var(--ok); }
+    .backlog { margin-top: 2rem; font-size: 0.9rem; color: var(--muted); }
 
-    .spec-pill {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.78rem;
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 0.2rem 0.55rem;
-      border-radius: 4px;
-    }
+    /* principles */
+    .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); border-radius: 12px; overflow: hidden; }
+    @media (max-width: 960px) { .principles { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 620px) { .principles { grid-template-columns: 1fr; } }
+    .principle { background: var(--bg); padding: 1.5rem; }
+    .principle .n { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); margin-bottom: 0.6rem; }
+    .principle p { font-size: 0.92rem; }
 
-    .spec-pill.planned {
-      border-style: dashed;
-    }
+    /* scope */
+    .scope { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 760px) { .scope { grid-template-columns: 1fr; } }
+    .scope .card { background: transparent; }
+    .scope ul { list-style: none; }
+    .scope li { padding: 0.5rem 0 0.5rem 1.6rem; position: relative; border-bottom: 1px solid var(--hairline); color: var(--muted); font-size: 0.93rem; }
+    .scope li:last-child { border-bottom: 0; }
+    .scope li strong { color: var(--text); font-weight: 600; }
+    .scope .yes li::before { content: "✓"; position: absolute; left: 0; color: var(--ok); }
+    .scope .no li::before { content: "✕"; position: absolute; left: 0; color: #f85149; }
 
-    .roadmap {
-      list-style: none;
-      border-left: 1px solid var(--border);
-      padding-left: 0;
-    }
+    /* contribute */
+    .contribute { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    @media (max-width: 860px) { .contribute { grid-template-columns: 1fr; } }
 
-    .roadmap li {
-      position: relative;
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .roadmap li::before {
-      content: "";
-      position: absolute;
-      left: -0.3rem;
-      top: 0.55rem;
-      width: 0.55rem;
-      height: 0.55rem;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: var(--bg);
-    }
-
-    .roadmap li.done::before {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .roadmap .ver {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      color: var(--text);
-      font-size: 0.85rem;
-    }
-
-    .principles {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
-    }
-
-    .principle-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.1rem;
-    }
-
-    .principle-item h3 {
-      font-size: 0.95rem;
-      margin-bottom: 0.4rem;
-      color: var(--text);
-    }
-
-    .principle-item p {
-      font-size: 0.88rem;
-      margin-bottom: 0;
-    }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding-top: 1.5rem;
-      margin-top: 3rem;
-      font-size: 0.85rem;
-      color: var(--muted);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    footer a {
-      color: var(--muted);
-      text-decoration: underline;
-    }
-
-    footer a:hover,
-    footer a:focus-visible {
-      color: var(--text);
-    }
-
-    .disclaimer {
-      flex-basis: 100%;
-      font-size: 0.78rem;
-      color: #6e7681;
-      border-top: 1px solid var(--border);
-      padding-top: 0.85rem;
-      margin-top: 0.25rem;
-    }
-
-    :focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
+    footer { border-top: 1px solid var(--hairline); padding: 2.2rem 0 3rem; font-size: 0.85rem; color: var(--muted); }
+    footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 2rem; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+    .disclaimer { flex-basis: 100%; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--hairline); padding-top: 1rem; margin-top: 0.5rem; max-width: 90ch; }
   </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <div class="container">
-    <header>
-      <div class="org-tag">OPEN-SOURCE HEAVY-DUTY INFRASTRUCTURE</div>
-      <h1>Open Heavy Machinery</h1>
-      <p class="subtitle">
-        Deterministic plant simulation, Hardware-in-the-Loop (HIL), and embedded control tooling for industrial, off-highway, and marine powertrain systems.
-      </p>
-      <nav aria-label="Primary">
-        <a class="primary" href="https://github.com/Open-Heavy-Machinery/open-crank" target="_blank" rel="noopener noreferrer">Watch open-crank</a>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="#top" aria-label="Open Heavy Machinery, top of page">
+        <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="11" fill="none" stroke="#f0883e" stroke-width="3"/>
+          <line x1="16" y1="16" x2="16" y2="8.5" stroke="#f0883e" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="16" cy="8.5" r="3.2" fill="#f0883e"/>
+          <circle cx="16" cy="16" r="2.2" fill="#0d1117" stroke="#f0883e" stroke-width="2"/>
+        </svg>
+        Open Heavy Machinery
+      </a>
+      <nav class="topnav" aria-label="Primary">
+        <a href="#today">What runs</a>
+        <a href="#how">How it works</a>
         <a href="#roadmap">Roadmap</a>
-        <a href="https://github.com/Open-Heavy-Machinery" target="_blank" rel="noopener noreferrer">GitHub Organization</a>
-        <a href="https://github.com/Open-Heavy-Machinery/open-crank/issues" target="_blank" rel="noopener noreferrer">Issues</a>
+        <a class="gh" href="https://github.com/Open-Heavy-Machinery/open-crank">GitHub</a>
       </nav>
-    </header>
+    </div>
+  </header>
 
-    <main id="main">
-      <section aria-labelledby="mission">
-        <h2 id="mission"><span class="slashes" aria-hidden="true">// </span>Mission</h2>
-        <p>
-          Developing embedded control software for heavy machinery is bottlenecked by physical access. Real engines, dynamometer cells, and proprietary HIL rigs are expensive and inaccessible to independent engineers, researchers, and small teams.
-        </p>
-        <p>
-          Open Heavy Machinery builds open, auditable simulation and validation tools so control firmware can be developed, tested, and broken in CI or on a bench before touching physical iron.
-        </p>
-      </section>
-
-      <section aria-labelledby="projects">
-        <h2 id="projects"><span class="slashes" aria-hidden="true">// </span>Active Projects</h2>
-        <div class="card">
-          <div class="card-header">
-            <a class="card-title" href="https://github.com/Open-Heavy-Machinery/open-crank" target="_blank" rel="noopener noreferrer">
-              open-crank
+  <main id="main">
+    <div class="hero" id="top">
+      <div class="wrap">
+        <div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.1<span class="long"> · Level 1 vertical slice</span></div>
+          <h1>A heavy-duty diesel that <em>answers back.</em></h1>
+          <p class="lede">
+            <strong>open-crank</strong> simulates a heavy-duty diesel engine, its engine ECU and its hydraulic load, and speaks <strong>SAE J1939 over CAN</strong>. Develop, test and break machine-controller firmware on a laptop and in CI, then take the same C source to an emulator and a real board. No engine required.
+          </p>
+          <div class="cta">
+            <a class="btn primary" href="https://github.com/Open-Heavy-Machinery/open-crank">
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.93-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.19c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+              open-crank on GitHub
             </a>
-            <span class="badge">PRE-ALPHA · v0.1 TARGET</span>
+            <a class="btn" href="#start">Run it in a minute</a>
           </div>
-          <p>
-            Open-source HIL/SIL heavy-duty engine plant simulator for critical embedded systems. Speaks SAE J1939 over CAN, decouples deterministic plant physics from I/O and time backends, and targets both soft real-time emulators (Renode, QEMU) and hard real-time FPGA rigs.
-          </p>
-          <p class="note">
-            Honest status: the repository currently holds a README and a license. Nothing runs yet. v0.1 is the first milestone with something to execute.
-          </p>
-          <div class="specs">
-            <span class="spec-pill">C11 Core</span>
-            <span class="spec-pill">SAE J1939 / vcan</span>
-            <span class="spec-pill">Renode / QEMU</span>
-            <span class="spec-pill">Apache-2.0</span>
+          <ul class="facts" aria-label="Key facts">
+            <li>C11, Apache-2.0</li>
+            <li>closed-loop tests in CI</li>
+            <li>controller core builds for Cortex-M4F</li>
+          </ul>
+        </div>
+
+        <figure class="term" aria-labelledby="frames-caption">
+          <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>J1939 · hoist scenario · t = 9.00 s</span></div>
+          <ol class="frames">
+            <li><span class="id">0C000027</span><span class="bytes"><b>F1 E0 2E</b> FF FF FF FF FF</span><span class="msg">TSC1 <span class="dir">controller → engine</span><small>speed control, 1,500.0 rpm</small></span></li>
+            <li><span class="id">0CF00400</span><span class="bytes">FF AA AA <b>0D 2D 27</b> FF FF</span><span class="msg">EEC1 <span class="dir">engine</span><small>1,441.6 rpm · 45 % torque · in control: 0x27</small></span></li>
+            <li><span class="id">0CFF2127</span><span class="bytes"><b>D5</b> FF FF FF FF FF FF FF</span><span class="msg">OC_PUMP_CMD <span class="dir">controller → pump</span><small>hoist pump displacement 85.2 %</small></span></li>
+            <li><span class="id">18FF20FC</span><span class="bytes"><b>E0 2E D5</b> FC FF FF FF FF</span><span class="msg">OC_OPERATOR <span class="dir">operator panel</span><small>hand throttle 1,500 rpm · hoist lever 85.2 %</small></span></li>
+            <li><span class="id">18FEEF00</span><span class="bytes">FF FF FF <b>6B</b> FF FF FF FF</span><span class="msg">EFL/P1 <span class="dir">engine</span><small>oil pressure 428 kPa</small></span></li>
+            <li><span class="id">18FEEE00</span><span class="bytes"><b>41</b> FF FF FF FF FF FF FF</span><span class="msg">ET1 <span class="dir">engine</span><small>coolant 25 °C, still warming up</small></span></li>
+          </ol>
+          <figcaption class="term-foot" id="frames-caption">Real frames from the v0.1 closed loop, one second after the hoist load lands: the engine is 58 rpm short of the request and closing the gap as its turbo spools. The <code>OC_*</code> messages are open-crank's own, not J1939.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <section aria-labelledby="why-h">
+      <div class="wrap why">
+        <div>
+          <div class="kicker">// why</div>
+          <h2 id="why-h">The barrier is access, not knowledge.</h2>
+          <p>Real engines, dynamometer cells and HIL rigs are expensive and booked solid. Most engineers who want to learn energy- and power-management control never get past a bench-supply motor, and teams arrive at the test bench with code that has never felt a real load.</p>
+          <p>Open Heavy Machinery builds the missing half of the loop in the open: plants, engine-side peers and test infrastructure you can read, run in CI, and argue with.</p>
+        </div>
+        <p class="quote">"A control regression should fail a build, not a shift."<small>The promise every open-crank test is written to keep.</small></p>
+      </div>
+    </section>
+
+    <section id="today" aria-labelledby="today-h">
+      <div class="wrap">
+        <div class="kicker">// what runs today · v0.1</div>
+        <h2 id="today-h">A complete control loop, on the bus, in CI.</h2>
+        <p class="intro">Version 0.1 is a Level 1 vertical slice: a machine controller asks a simulated engine for speed over J1939 while a hydraulic hoist loads it, and tests prove what happens. Every claim below points at the code that backs it.</p>
+        <div class="grid">
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 12V5"/><circle cx="12" cy="5" r="1.5" fill="currentColor"/></svg></div>
+            <h3>A plant that never cheats</h3>
+            <p>Mean-value model of a 10.5 L inline six of the D936L A6 class: brake-torque map, friction, turbo lag, starter. Physics only: it never starts itself and never quietly helps the controller.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-crank/tree/main/sim/core">sim/core</a> · <a href="https://github.com/Open-Heavy-Machinery/open-crank/tree/main/sim/plants/d936la6">sim/plants/d936la6</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg></div>
+            <h3>An engine ECU with opinions</h3>
+            <p>A simulated engine ECU sits between your controller and the physics: starter control, idle and speed governor, governed ceiling, stale-command timeout, overspeed trip latched until the engine stops.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-crank/tree/main/sim/engine_ecu">sim/engine_ecu</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12h20"/><path d="M6 12V7M10 12v5M14 12V7M18 12v5"/></svg></div>
+            <h3>J1939 as the standard means it</h3>
+            <p>TSC1 in; EEC1, ET1 and EFL/P1 out. A saturating codec that handles "not available", and an engine that reports who is in control, so your controller can tell when it is not.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/bus-interface.md">docs/bus-interface.md</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9l3 3-3 3M13 15h3"/></svg></div>
+            <h3>A controller that goes to firmware</h3>
+            <p>The reference machine controller is plain C that depends on three standard headers. CI builds it for a Cortex-M4F on every push: about 2.6 KB, no <code>double</code>, nothing from libc.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-crank/tree/main/portable">portable/</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg></div>
+            <h3>Scenarios are data</h3>
+            <p>Start, hoist, lose the bus, overspeed: plain CSV files, shared by the tests, the headless runner and the SIL. A typo in a signal name fails loudly instead of running a different test.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-crank/tree/main/scenarios">scenarios/</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div>
+            <h3>Tests that can fail</h3>
+            <p>Closed-loop tests for every exit scenario, sanitizers, and 18 deliberate mutations: CI breaks each safety behaviour on purpose and requires the suite to notice.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/tools/mutation_check.sh">tools/mutation_check.sh</a></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="respond-h">
+      <div class="wrap">
+        <div class="kicker">// see it respond</div>
+        <h2 id="respond-h">Pull the hoist lever at 1,500 rpm.</h2>
+        <p class="intro">About 570 Nm lands on the crankshaft. The engine sags, its governor and turbo fight back, and the speed recovers; release the lever and it overshoots and settles. This is the output of the v0.1 hoist scenario, not an illustration.</p>
+        <div class="figure">
+          <div class="stats">
+            <div class="stat"><div class="value">−171 rpm</div><div class="label">deepest droop under load</div></div>
+            <div class="stat"><div class="value">1.4 s</div><div class="label">back within 1 % of the request</div></div>
+            <div class="stat"><div class="value">+222 rpm</div><div class="label">overshoot when the load drops</div></div>
+            <div class="stat"><div class="value">~10 ms</div><div class="label">to run all 25 s headless on a laptop</div></div>
           </div>
-          <div class="specs">
-            <span class="spec-pill planned">Plant: Liebherr D936L A6 — v0.1</span>
-            <span class="spec-pill planned">Plant: MAN B&amp;W 9G95ME-C10.6 — v0.5</span>
-            <span class="spec-pill planned">FPGA HIL backend — v0.4</span>
+          <p class="scroll-hint" aria-hidden="true">Swipe the chart sideways to see all of it.</p>
+          <div class="chart" id="chart">
+            <svg class="chart-svg" viewBox="0 0 760 400" role="img" aria-labelledby="chart-title chart-desc">
+            <title id="chart-title">Engine speed and load torque during a hydraulic load step</title>
+            <desc id="chart-desc">At 8 s the hoist takes about 570 Nm. Speed drops from 1500 to 1329 rpm, is back within 1 % 1.4 s after the step, and holds 1500 rpm. At 18 s the load is released: speed overshoots to 1722 rpm and is back within 1 % after 1.1 s.</desc>
+            <line class="grid" x1="58" x2="742" y1="210.4" y2="210.4"/>
+            <text class="tick" x="50" y="214.4" text-anchor="end">1,300</text>
+            <line class="grid" x1="58" x2="742" y1="175.1" y2="175.1"/>
+            <text class="tick" x="50" y="179.1" text-anchor="end">1,400</text>
+            <line class="grid" x1="58" x2="742" y1="139.8" y2="139.8"/>
+            <text class="tick" x="50" y="143.8" text-anchor="end">1,500</text>
+            <line class="grid" x1="58" x2="742" y1="104.5" y2="104.5"/>
+            <text class="tick" x="50" y="108.5" text-anchor="end">1,600</text>
+            <line class="grid" x1="58" x2="742" y1="69.3" y2="69.3"/>
+            <text class="tick" x="50" y="73.3" text-anchor="end">1,700</text>
+            <line class="grid" x1="58" x2="742" y1="34.0" y2="34.0"/>
+            <text class="tick" x="50" y="38.0" text-anchor="end">1,800</text>
+            <line class="grid" x1="58" x2="742" y1="362.0" y2="362.0"/>
+            <text class="tick" x="50" y="366.0" text-anchor="end">0</text>
+            <line class="grid" x1="58" x2="742" y1="320.0" y2="320.0"/>
+            <text class="tick" x="50" y="324.0" text-anchor="end">300</text>
+            <line class="grid" x1="58" x2="742" y1="278.0" y2="278.0"/>
+            <text class="tick" x="50" y="282.0" text-anchor="end">600</text>
+            <text class="tick" x="58.0" y="382" text-anchor="middle">5 s</text>
+            <text class="tick" x="229.0" y="382" text-anchor="middle">10 s</text>
+            <text class="tick" x="400.0" y="382" text-anchor="middle">15 s</text>
+            <text class="tick" x="571.0" y="382" text-anchor="middle">20 s</text>
+            <text class="tick" x="742.0" y="382" text-anchor="middle">25 s</text>
+            <rect class="band" x="160.6" y="34" width="342.0" height="328"/>
+            <text class="panel-title" x="58" y="20">Engine speed, rpm</text>
+            <text class="panel-title" x="58" y="264">Load torque at the crankshaft, Nm</text>
+            <text class="band-label" x="331.6" y="20" text-anchor="middle">hoist lever 85 %, 250 bar on the hook</text>
+            <line class="ref" x1="58" x2="742" y1="139.8" y2="139.8"/>
+            <path class="line line-speed" d="M58.0,139.8 L59.7,139.8 L61.4,139.8 L63.1,139.8 L64.8,139.8 L66.5,139.8 L68.3,139.8 L70.0,139.8 L71.7,139.8 L73.4,139.8 L75.1,139.8 L76.8,139.8 L78.5,139.8 L80.2,139.8 L81.9,139.8 L83.7,139.8 L85.4,139.8 L87.1,139.8 L88.8,139.8 L90.5,139.8 L92.2,139.8 L93.9,139.8 L95.6,139.8 L97.3,139.8 L99.0,139.8 L100.8,139.8 L102.5,139.8 L104.2,139.8 L105.9,139.8 L107.6,139.8 L109.3,139.8 L111.0,139.8 L112.7,139.8 L114.4,139.8 L116.1,139.8 L117.8,139.8 L119.6,139.8 L121.3,139.8 L123.0,139.8 L124.7,139.8 L126.4,139.8 L128.1,139.8 L129.8,139.8 L131.5,139.8 L133.2,139.8 L134.9,139.8 L136.7,139.8 L138.4,139.8 L140.1,139.8 L141.8,139.8 L143.5,139.8 L145.2,139.8 L146.9,139.8 L148.6,139.8 L150.3,139.8 L152.1,139.8 L153.8,139.8 L155.5,139.8 L157.2,139.8 L158.9,139.8 L160.6,139.8 L162.3,140.7 L164.0,146.4 L165.7,156.2 L167.4,167.7 L169.2,178.8 L170.9,187.9 L172.6,194.4 L174.3,198.4 L176.0,200.1 L177.7,199.8 L179.4,197.7 L181.1,194.2 L182.8,189.9 L184.5,185.2 L186.2,180.5 L188.0,175.9 L189.7,171.5 L191.4,167.5 L193.1,163.7 L194.8,160.4 L196.5,157.4 L198.2,154.7 L199.9,152.4 L201.6,150.4 L203.3,148.7 L205.1,147.2 L206.8,145.9 L208.5,144.9 L210.2,144.0 L211.9,143.2 L213.6,142.6 L215.3,142.1 L217.0,141.7 L218.7,141.3 L220.4,141.0 L222.2,140.8 L223.9,140.6 L225.6,140.4 L227.3,140.3 L229.0,140.2 L230.7,140.1 L232.4,140.1 L234.1,140.0 L235.8,140.0 L237.6,139.9 L239.3,139.9 L241.0,139.9 L242.7,139.9 L244.4,139.9 L246.1,139.9 L247.8,139.8 L249.5,139.8 L251.2,139.8 L252.9,139.8 L254.6,139.8 L256.4,139.8 L258.1,139.8 L259.8,139.8 L261.5,139.8 L263.2,139.8 L264.9,139.8 L266.6,139.8 L268.3,139.8 L270.0,139.8 L271.8,139.8 L273.5,139.8 L275.2,139.8 L276.9,139.8 L278.6,139.8 L280.3,139.8 L282.0,139.8 L283.7,139.8 L285.4,139.8 L287.1,139.8 L288.9,139.8 L290.6,139.8 L292.3,139.8 L294.0,139.8 L295.7,139.8 L297.4,139.8 L299.1,139.8 L300.8,139.8 L302.5,139.8 L304.2,139.8 L305.9,139.8 L307.7,139.8 L309.4,139.8 L311.1,139.8 L312.8,139.8 L314.5,139.8 L316.2,139.8 L317.9,139.8 L319.6,139.8 L321.3,139.8 L323.1,139.8 L324.8,139.8 L326.5,139.8 L328.2,139.8 L329.9,139.8 L331.6,139.8 L333.3,139.8 L335.0,139.8 L336.7,139.8 L338.4,139.8 L340.1,139.8 L341.9,139.8 L343.6,139.8 L345.3,139.8 L347.0,139.8 L348.7,139.8 L350.4,139.8 L352.1,139.8 L353.8,139.8 L355.5,139.8 L357.2,139.8 L359.0,139.8 L360.7,139.8 L362.4,139.8 L364.1,139.8 L365.8,139.8 L367.5,139.8 L369.2,139.8 L370.9,139.8 L372.6,139.8 L374.4,139.8 L376.1,139.8 L377.8,139.8 L379.5,139.8 L381.2,139.8 L382.9,139.8 L384.6,139.8 L386.3,139.8 L388.0,139.8 L389.7,139.8 L391.4,139.8 L393.2,139.8 L394.9,139.8 L396.6,139.8 L398.3,139.8 L400.0,139.8 L401.7,139.8 L403.4,139.8 L405.1,139.8 L406.8,139.8 L408.5,139.8 L410.3,139.8 L412.0,139.8 L413.7,139.8 L415.4,139.8 L417.1,139.8 L418.8,139.8 L420.5,139.8 L422.2,139.8 L423.9,139.8 L425.6,139.8 L427.4,139.8 L429.1,139.8 L430.8,139.8 L432.5,139.8 L434.2,139.8 L435.9,139.8 L437.6,139.8 L439.3,139.8 L441.0,139.8 L442.8,139.8 L444.5,139.8 L446.2,139.8 L447.9,139.8 L449.6,139.8 L451.3,139.8 L453.0,139.8 L454.7,139.8 L456.4,139.8 L458.1,139.8 L459.9,139.8 L461.6,139.8 L463.3,139.8 L465.0,139.8 L466.7,139.8 L468.4,139.8 L470.1,139.8 L471.8,139.8 L473.5,139.8 L475.2,139.8 L477.0,139.8 L478.7,139.8 L480.4,139.8 L482.1,139.8 L483.8,139.8 L485.5,139.8 L487.2,139.8 L488.9,139.8 L490.6,139.8 L492.3,139.8 L494.0,139.8 L495.8,139.8 L497.5,139.8 L499.2,139.8 L500.9,139.8 L502.6,139.8 L504.3,132.9 L506.0,111.3 L507.7,89.8 L509.4,74.2 L511.1,65.0 L512.9,61.5 L514.6,62.3 L516.3,66.2 L518.0,72.1 L519.7,79.1 L521.4,86.6 L523.1,94.0 L524.8,101.1 L526.5,107.6 L528.2,113.4 L530.0,118.5 L531.7,122.8 L533.4,126.5 L535.1,129.5 L536.8,132.0 L538.5,134.0 L540.2,135.6 L541.9,136.8 L543.6,137.7 L545.4,138.4 L547.1,139.0 L548.8,139.4 L550.5,139.6 L552.2,139.8 L553.9,139.9 L555.6,140.0 L557.3,140.0 L559.0,140.0 L560.7,140.0 L562.5,140.0 L564.2,140.0 L565.9,140.0 L567.6,140.0 L569.3,139.9 L571.0,139.9 L572.7,139.9 L574.4,139.9 L576.1,139.9 L577.8,139.9 L579.5,139.8 L581.3,139.8 L583.0,139.8 L584.7,139.8 L586.4,139.8 L588.1,139.8 L589.8,139.8 L591.5,139.8 L593.2,139.8 L594.9,139.8 L596.6,139.8 L598.4,139.8 L600.1,139.8 L601.8,139.8 L603.5,139.8 L605.2,139.8 L606.9,139.8 L608.6,139.8 L610.3,139.8 L612.0,139.8 L613.8,139.8 L615.5,139.8 L617.2,139.8 L618.9,139.8 L620.6,139.8 L622.3,139.8 L624.0,139.8 L625.7,139.8 L627.4,139.8 L629.1,139.8 L630.9,139.8 L632.6,139.8 L634.3,139.8 L636.0,139.8 L637.7,139.8 L639.4,139.8 L641.1,139.8 L642.8,139.8 L644.5,139.8 L646.2,139.8 L648.0,139.8 L649.7,139.8 L651.4,139.8 L653.1,139.8 L654.8,139.8 L656.5,139.8 L658.2,139.8 L659.9,139.8 L661.6,139.8 L663.3,139.8 L665.0,139.8 L666.8,139.8 L668.5,139.8 L670.2,139.8 L671.9,139.8 L673.6,139.8 L675.3,139.8 L677.0,139.8 L678.7,139.8 L680.4,139.8 L682.1,139.8 L683.9,139.8 L685.6,139.8 L687.3,139.8 L689.0,139.8 L690.7,139.8 L692.4,139.8 L694.1,139.8 L695.8,139.8 L697.5,139.8 L699.2,139.8 L701.0,139.8 L702.7,139.8 L704.4,139.8 L706.1,139.8 L707.8,139.8 L709.5,139.8 L711.2,139.8 L712.9,139.8 L714.6,139.8 L716.4,139.8 L718.1,139.8 L719.8,139.8 L721.5,139.8 L723.2,139.8 L724.9,139.8 L726.6,139.8 L728.3,139.8 L730.0,139.8 L731.7,139.8 L733.5,139.8 L735.2,139.8 L736.9,139.8 L738.6,139.8 L740.3,139.8 L742.0,139.8"/>
+            <path class="line line-load" d="M58.0,361.8 L59.7,361.8 L61.4,361.8 L63.1,361.8 L64.8,361.8 L66.5,361.8 L68.3,361.8 L70.0,361.8 L71.7,361.8 L73.4,361.8 L75.1,361.8 L76.8,361.8 L78.5,361.8 L80.2,361.8 L81.9,361.8 L83.7,361.8 L85.4,361.8 L87.1,361.8 L88.8,361.8 L90.5,361.8 L92.2,361.8 L93.9,361.8 L95.6,361.8 L97.3,361.8 L99.0,361.8 L100.8,361.8 L102.5,361.8 L104.2,361.8 L105.9,361.8 L107.6,361.8 L109.3,361.8 L111.0,361.8 L112.7,361.8 L114.4,361.8 L116.1,361.8 L117.8,361.8 L119.6,361.8 L121.3,361.8 L123.0,361.8 L124.7,361.8 L126.4,361.8 L128.1,361.8 L129.8,361.8 L131.5,361.8 L133.2,361.8 L134.9,361.8 L136.7,361.8 L138.4,361.8 L140.1,361.8 L141.8,361.8 L143.5,361.8 L145.2,361.8 L146.9,361.8 L148.6,361.8 L150.3,361.8 L152.1,361.8 L153.8,361.8 L155.5,361.8 L157.2,361.8 L158.9,361.8 L160.6,361.8 L162.3,357.7 L164.0,346.5 L165.7,334.6 L167.4,324.1 L169.2,315.5 L170.9,308.6 L172.6,303.3 L174.3,299.0 L176.0,295.7 L177.7,293.1 L179.4,291.0 L181.1,289.3 L182.8,288.0 L184.5,286.9 L186.2,286.1 L188.0,285.4 L189.7,284.8 L191.4,284.3 L193.1,283.9 L194.8,283.6 L196.5,283.4 L198.2,283.2 L199.9,283.0 L201.6,282.9 L203.3,282.8 L205.1,282.7 L206.8,282.6 L208.5,282.5 L210.2,282.5 L211.9,282.4 L213.6,282.4 L215.3,282.4 L217.0,282.4 L218.7,282.3 L220.4,282.3 L222.2,282.3 L223.9,282.3 L225.6,282.3 L227.3,282.3 L229.0,282.3 L230.7,282.3 L232.4,282.3 L234.1,282.3 L235.8,282.3 L237.6,282.3 L239.3,282.3 L241.0,282.3 L242.7,282.3 L244.4,282.3 L246.1,282.3 L247.8,282.3 L249.5,282.3 L251.2,282.3 L252.9,282.3 L254.6,282.3 L256.4,282.3 L258.1,282.3 L259.8,282.3 L261.5,282.3 L263.2,282.3 L264.9,282.3 L266.6,282.3 L268.3,282.3 L270.0,282.3 L271.8,282.3 L273.5,282.3 L275.2,282.3 L276.9,282.3 L278.6,282.3 L280.3,282.3 L282.0,282.3 L283.7,282.3 L285.4,282.3 L287.1,282.3 L288.9,282.3 L290.6,282.3 L292.3,282.3 L294.0,282.3 L295.7,282.3 L297.4,282.3 L299.1,282.3 L300.8,282.3 L302.5,282.3 L304.2,282.3 L305.9,282.3 L307.7,282.3 L309.4,282.3 L311.1,282.3 L312.8,282.3 L314.5,282.3 L316.2,282.3 L317.9,282.3 L319.6,282.3 L321.3,282.3 L323.1,282.3 L324.8,282.3 L326.5,282.3 L328.2,282.3 L329.9,282.3 L331.6,282.3 L333.3,282.3 L335.0,282.3 L336.7,282.3 L338.4,282.3 L340.1,282.3 L341.9,282.3 L343.6,282.3 L345.3,282.3 L347.0,282.3 L348.7,282.3 L350.4,282.3 L352.1,282.3 L353.8,282.3 L355.5,282.3 L357.2,282.3 L359.0,282.3 L360.7,282.3 L362.4,282.3 L364.1,282.3 L365.8,282.3 L367.5,282.3 L369.2,282.3 L370.9,282.3 L372.6,282.3 L374.4,282.3 L376.1,282.3 L377.8,282.3 L379.5,282.3 L381.2,282.3 L382.9,282.3 L384.6,282.3 L386.3,282.3 L388.0,282.3 L389.7,282.3 L391.4,282.3 L393.2,282.3 L394.9,282.3 L396.6,282.3 L398.3,282.3 L400.0,282.3 L401.7,282.3 L403.4,282.3 L405.1,282.3 L406.8,282.3 L408.5,282.3 L410.3,282.3 L412.0,282.3 L413.7,282.3 L415.4,282.3 L417.1,282.3 L418.8,282.3 L420.5,282.3 L422.2,282.3 L423.9,282.3 L425.6,282.3 L427.4,282.3 L429.1,282.3 L430.8,282.3 L432.5,282.3 L434.2,282.3 L435.9,282.3 L437.6,282.3 L439.3,282.3 L441.0,282.3 L442.8,282.3 L444.5,282.3 L446.2,282.3 L447.9,282.3 L449.6,282.3 L451.3,282.3 L453.0,282.3 L454.7,282.3 L456.4,282.3 L458.1,282.3 L459.9,282.3 L461.6,282.3 L463.3,282.3 L465.0,282.3 L466.7,282.3 L468.4,282.3 L470.1,282.3 L471.8,282.3 L473.5,282.3 L475.2,282.3 L477.0,282.3 L478.7,282.3 L480.4,282.3 L482.1,282.3 L483.8,282.3 L485.5,282.3 L487.2,282.3 L488.9,282.3 L490.6,282.3 L492.3,282.3 L494.0,282.3 L495.8,282.3 L497.5,282.3 L499.2,282.3 L500.9,282.3 L502.6,282.3 L504.3,309.4 L506.0,335.3 L507.7,348.2 L509.4,354.6 L511.1,357.8 L512.9,359.5 L514.6,360.4 L516.3,360.9 L518.0,361.1 L519.7,361.3 L521.4,361.4 L523.1,361.5 L524.8,361.6 L526.5,361.6 L528.2,361.6 L530.0,361.7 L531.7,361.7 L533.4,361.7 L535.1,361.7 L536.8,361.7 L538.5,361.7 L540.2,361.8 L541.9,361.8 L543.6,361.8 L545.4,361.8 L547.1,361.8 L548.8,361.8 L550.5,361.8 L552.2,361.8 L553.9,361.8 L555.6,361.8 L557.3,361.8 L559.0,361.8 L560.7,361.8 L562.5,361.8 L564.2,361.8 L565.9,361.8 L567.6,361.8 L569.3,361.8 L571.0,361.8 L572.7,361.8 L574.4,361.8 L576.1,361.8 L577.8,361.8 L579.5,361.8 L581.3,361.8 L583.0,361.8 L584.7,361.8 L586.4,361.8 L588.1,361.8 L589.8,361.8 L591.5,361.8 L593.2,361.8 L594.9,361.8 L596.6,361.8 L598.4,361.8 L600.1,361.8 L601.8,361.8 L603.5,361.8 L605.2,361.8 L606.9,361.8 L608.6,361.8 L610.3,361.8 L612.0,361.8 L613.8,361.8 L615.5,361.8 L617.2,361.8 L618.9,361.8 L620.6,361.8 L622.3,361.8 L624.0,361.8 L625.7,361.8 L627.4,361.8 L629.1,361.8 L630.9,361.8 L632.6,361.8 L634.3,361.8 L636.0,361.8 L637.7,361.8 L639.4,361.8 L641.1,361.8 L642.8,361.8 L644.5,361.8 L646.2,361.8 L648.0,361.8 L649.7,361.8 L651.4,361.8 L653.1,361.8 L654.8,361.8 L656.5,361.8 L658.2,361.8 L659.9,361.8 L661.6,361.8 L663.3,361.8 L665.0,361.8 L666.8,361.8 L668.5,361.8 L670.2,361.8 L671.9,361.8 L673.6,361.8 L675.3,361.8 L677.0,361.8 L678.7,361.8 L680.4,361.8 L682.1,361.8 L683.9,361.8 L685.6,361.8 L687.3,361.8 L689.0,361.8 L690.7,361.8 L692.4,361.8 L694.1,361.8 L695.8,361.8 L697.5,361.8 L699.2,361.8 L701.0,361.8 L702.7,361.8 L704.4,361.8 L706.1,361.8 L707.8,361.8 L709.5,361.8 L711.2,361.8 L712.9,361.8 L714.6,361.8 L716.4,361.8 L718.1,361.8 L719.8,361.8 L721.5,361.8 L723.2,361.8 L724.9,361.8 L726.6,361.8 L728.3,361.8 L730.0,361.8 L731.7,361.8 L733.5,361.8 L735.2,361.8 L736.9,361.8 L738.6,361.8 L740.3,361.8 L742.0,361.8"/>
+            <circle class="mark mark-speed" cx="176.7" cy="200.2" r="4.5"/>
+            <text class="anno" x="186.7" y="205.2">−171 rpm as the load lands</text>
+            <path class="bracket" d="M160.6,168.8 V173.8 H208.1 V168.8"/>
+            <text class="anno" x="216.1" y="177.8">back within 1 % in 1.4 s: turbo lag</text>
+            <circle class="mark mark-speed" cx="513.2" cy="61.4" r="4.5"/>
+            <text class="anno" x="523.2" y="66.4">+222 rpm on release, settled in 1.1 s</text>
+            <text class="anno anno-muted" x="742" y="132.8" text-anchor="end">requested 1,500 rpm</text>
+            <text class="anno" x="331.6" y="300.2" text-anchor="middle">≈ 570 Nm</text>
+            <g class="hover" aria-hidden="true"><line class="cross" x1="0" x2="0" y1="34" y2="362"/><circle class="hdot hdot-speed" r="4.5"/><circle class="hdot hdot-load" r="4.5"/></g>
+            <rect class="hit" x="58" y="34" width="684" height="328"/>
+            </svg>
+            <div class="tip" id="tip" role="status" aria-live="polite"></div>
+          </div>
+          <p class="caption">Produced by <code>open-crank-run scenarios/hoist_step.csv --trace hoist.csv</code> with the reference controller in the loop. The engine is representative of its class, not calibrated against a real one: <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/parameters.md">every parameter has a stated source</a>.</p>
+          <details class="data">
+            <summary>Show the key values as a table</summary>
+            <table>
+              <thead><tr><th>t (s)</th><th>speed (rpm)</th><th>load (Nm)</th><th>event</th></tr></thead>
+              <tbody>
+                <tr><td>8.00</td><td>1,500.0</td><td>1.5</td><td>operator pulls the hoist lever to 85 %</td></tr>
+                <tr><td>8.47</td><td>1,328.7</td><td>481.4</td><td>deepest droop</td></tr>
+                <tr><td>9.39</td><td>1,485.1</td><td>567.6</td><td>back within 1 %</td></tr>
+                <tr><td>17.90</td><td>1,500.0</td><td>569.5</td><td>steady under load</td></tr>
+                <tr><td>18.31</td><td>1,722.4</td><td>16.4</td><td>peak after release</td></tr>
+                <tr><td>19.07</td><td>1,514.6</td><td>1.7</td><td>back within 1 %</td></tr>
+              </tbody>
+            </table>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" aria-labelledby="how-h">
+      <div class="wrap">
+        <div class="kicker">// how it works</div>
+        <h2 id="how-h">Your controller sees a bus. Behind it, a whole machine.</h2>
+        <p class="intro">In Level 1 the device under test only touches CAN, exactly like a crane or vessel controller does. That is what lets the same firmware run against a laptop today and a real board tomorrow.</p>
+        <div class="arch">
+          <figure class="diagram">
+            <svg viewBox="0 0 640 330" role="img" aria-labelledby="dia-title dia-desc">
+              <title id="dia-title">Level 1 setup</title>
+              <desc id="dia-desc">Your controller exchanges frames over a CAN bus with the bench. TSC1 goes to the simulated engine ECU, which answers with EEC1, ET1 and EFL/P1. The operator panel sends OC_OPERATOR; the controller sends OC_PUMP_CMD to the hydraulic pump. Inside the bench, the engine ECU sets fuel and starter for the plant, and the pump loads the plant.</desc>
+              <defs>
+                <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8b949e"/></marker>
+              </defs>
+              <!-- device under test -->
+              <rect class="box-dut" x="10" y="80" width="168" height="170" rx="10"/>
+              <text class="t" x="26" y="112">Your controller</text>
+              <text class="s" x="26" y="130">device under test</text>
+              <text class="m" x="26" y="170">laptop  · v0.1</text>
+              <text class="m" x="26" y="190">Renode  · v0.2</text>
+              <text class="m" x="26" y="210">STM32G4 · v0.3</text>
+              <text class="s" x="26" y="236">same C source</text>
+              <!-- bus -->
+              <line class="bus" x1="214" y1="34" x2="214" y2="300"/>
+              <text class="mh" x="214" y="320" text-anchor="middle">CAN · J1939</text>
+              <line class="arrow" x1="178" y1="165" x2="208" y2="165" marker-end="url(#ah)"/>
+              <!-- bench frame -->
+              <rect class="frame" x="380" y="14" width="250" height="300" rx="12"/>
+              <text class="s" x="396" y="36">sim/ · the bench</text>
+              <!-- operator -->
+              <rect class="box" x="400" y="48" width="210" height="42" rx="8"/>
+              <text class="t" x="414" y="74">Operator panel</text>
+              <!-- ecu -->
+              <rect class="box" x="400" y="112" width="210" height="50" rx="8"/>
+              <text class="t" x="414" y="135">Engine ECU</text>
+              <text class="s" x="414" y="152">governor · limits · timeouts</text>
+              <!-- plant -->
+              <rect class="box" x="400" y="186" width="210" height="50" rx="8"/>
+              <text class="t" x="414" y="209">Plant</text>
+              <text class="s" x="414" y="226">crankshaft · turbo · starter</text>
+              <!-- pump -->
+              <rect class="box" x="400" y="260" width="210" height="42" rx="8"/>
+              <text class="t" x="414" y="286">Hydraulic pump</text>
+              <!-- bus arrows -->
+              <line class="arrow" x1="398" y1="69" x2="220" y2="69" marker-end="url(#ah)"/>
+              <text class="m" x="230" y="61">OC_OPERATOR</text>
+              <line class="arrow" x1="220" y1="124" x2="398" y2="124" marker-end="url(#ah)"/>
+              <text class="mh" x="230" y="116">TSC1</text>
+              <text class="m" x="268" y="116">speed request</text>
+              <line class="arrow" x1="398" y1="150" x2="220" y2="150" marker-end="url(#ah)"/>
+              <text class="m" x="230" y="166">EEC1 · ET1 · EFL/P1</text>
+              <line class="arrow" x1="220" y1="281" x2="398" y2="281" marker-end="url(#ah)"/>
+              <text class="m" x="230" y="273">OC_PUMP_CMD</text>
+              <!-- internal -->
+              <line class="arrow-int" x1="505" y1="162" x2="505" y2="184" marker-end="url(#ah)"/>
+              <text class="s" x="512" y="177">fuel, starter</text>
+              <line class="arrow-int" x1="505" y1="260" x2="505" y2="238" marker-end="url(#ah)"/>
+              <text class="s" x="512" y="253">load torque</text>
+            </svg>
+          </figure>
+          <div class="levels">
+            <div class="level">
+              <h3>Level 1 · machine controller <span class="chip now">now</span></h3>
+              <p>Your firmware is the machine's supervisory controller, a crane, vessel or generator-set controller, EMS or PMS. It asks the engine for speed, reads its status and drives the loads. All it needs is a CAN bus; <code>vcan</code> will do.</p>
+            </div>
+            <div class="level">
+              <h3>Level 2 · engine ECU <span class="chip">v0.4</span></h3>
+              <p>Your firmware is the controller inside the engine. It reads crank and cam signals and sensors and commands fuel, so it needs microsecond-accurate waveforms from an FPGA or MCU timer backend.</p>
+            </div>
           </div>
         </div>
-      </section>
+        <div class="zones">
+          <div class="zone"><h3>portable/</h3><p>The controller and the J1939 codec. Depends on <code>stdint.h</code>, <code>stdbool.h</code>, <code>stddef.h</code> and nothing else. Goes to firmware.</p></div>
+          <div class="zone"><h3>sim/</h3><p>Plant physics, the engine ECU, loads, the bench, scenarios. Host only, double precision, never reads a clock.</p></div>
+          <div class="zone"><h3>platforms/</h3><p>Thin glue per target: headless host, Linux SocketCAN today; Renode, STM32G4 and FPGA next.</p></div>
+        </div>
+        <p class="zone-rule">Dependencies point one way, and CI enforces it: if <code>portable/</code> ever picks up a <code>printf</code>, a socket or a software-emulated <code>double</code>, the build fails.</p>
+      </div>
+    </section>
 
-      <section aria-labelledby="roadmap">
-        <h2 id="roadmap"><span class="slashes" aria-hidden="true">// </span>Roadmap</h2>
-        <p>
-          Scope is deliberately narrow at the start. Each milestone is small enough to finish and big enough to be useful on its own.
-        </p>
-        <ul class="roadmap">
-          <li>
-            <span class="ver">v0.1</span> — Vertical slice: mean-value model of the Liebherr D936L A6, one ECU in Renode, vcan, six PGNs, dashboard, one CI test that closes a speed-control loop.
-          </li>
-          <li>
-            <span class="ver">v0.2</span> — Aftertreatment: DOC / DPF / SCR with soot and DEF dosing, regeneration request logic.
-          </li>
-          <li>
-            <span class="ver">v0.3</span> — Fault injection: sensor open / short / plausibility, CAN dropout, limp-home paths.
-          </li>
-          <li>
-            <span class="ver">v0.4</span> — HIL: FPGA time backend, real crank and cam waveforms, jitter measurement.
-          </li>
-          <li>
-            <span class="ver">v0.5</span> — Second plant: MAN B&amp;W 9G95ME-C10.6, propeller load, ME-style electronic control, PMS scenario. Refactor whatever the second plant breaks.
-          </li>
-        </ul>
-      </section>
+    <section id="start" aria-labelledby="start-h">
+      <div class="wrap start">
+        <div>
+          <div class="kicker">// run it</div>
+          <h2 id="start-h">From clone to closed loop in a minute.</h2>
+          <p>Any machine with a C11 compiler and CMake. No CAN hardware, no root, no engine.</p>
+          <ul class="checklist">
+            <li>Run every scenario headless and get a CSV trace.</li>
+            <li>Put the simulated machine on a <code>vcan</code> bus and watch it with <code>candump</code>.</li>
+            <li>Bring your own controller: the <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/bus-interface.md">bus contract</a> fits on one page.</li>
+          </ul>
+        </div>
+        <div class="code">
+          <div class="code-bar"><span>shell</span><button class="copy" type="button" data-copy="quickstart">copy</button></div>
+<pre id="quickstart"><span class="p">$ </span>git clone https://github.com/Open-Heavy-Machinery/open-crank.git
+<span class="p">$ </span>cd open-crank
+<span class="p">$ </span>cmake -S . -B build &amp;&amp; cmake --build build
+<span class="p">$ </span>ctest --test-dir build --output-on-failure
+<span class="c"># a 25 s hoist scenario, closed loop, in milliseconds</span>
+<span class="p">$ </span>./build/open-crank-run scenarios/hoist_step.csv --trace hoist.csv</pre>
+        </div>
+      </div>
+    </section>
 
-      <section aria-labelledby="principles">
-        <h2 id="principles"><span class="slashes" aria-hidden="true">// </span>Engineering Principles</h2>
+    <section id="roadmap" aria-labelledby="roadmap-h">
+      <div class="wrap">
+        <div class="kicker">// direction</div>
+        <h2 id="roadmap-h">From a laptop to an FPGA rig, one finishable step at a time.</h2>
+        <p class="intro">No dates. A milestone is done when its exit criteria are met, and each one is small enough to finish and useful on its own. The full plan, with criteria, is in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/ROADMAP.md">ROADMAP.md</a>.</p>
+        <ol class="timeline">
+          <li class="current">
+            <div class="tl-head"><span class="tl-ver">v0.1</span><span class="tl-title">Level 1 vertical slice, in CI</span><span class="chip now">implemented · checked</span></div>
+            <p>Plant, simulated engine ECU, J1939 codec, portable controller, scenarios, closed-loop tests and the Cortex-M4F portability check.</p>
+            <ul class="pending">
+              <li class="done">closed-loop scenarios, portability, mutation checks, parameter provenance</li>
+              <li class="done">first CI run on GitHub</li>
+              <li class="done">the <code>vcan</code> demo verified end to end</li>
+            </ul>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Firmware in the loop</span><span class="chip">Renode</span></div>
+            <p>The same controller source, compiled for a microcontroller and run in Renode, regulates the same engine; speed traces must agree with the host build within a stated tolerance, headless in CI. First risk to retire: whether Renode models the target's CAN peripheral.</p>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Real board on the bus, fault injection</span><span class="chip">STM32G4 + USB-CAN</span></div>
+            <p>A physical board runs the portable controller over a real CAN link. CAN dropout, jitter, corrupted frames, faults reported by the engine (DM1), TSC1 counter and checksum, and measured end-to-end latency. Real silicon, never real machinery.</p>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Level 2 and hard real time</span><span class="chip">FPGA</span></div>
+            <p>Your firmware becomes the engine ECU: 60-2 crank and cam waveforms and deterministic I/O from an FPGA, with a stated and measured jitter budget. The plant stays on a CPU; the FPGA does timing.</p>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.5</span><span class="tl-title">A second, radically different plant</span><span class="chip">marine 2-stroke</span></div>
+            <p>A MAN B&amp;W 9G95ME-C10.6-class engine, about 60 MW at 70–80 rpm, driving a propeller through its own ME-style control interface. The plant interface is extracted from what both engines really share, not guessed before.</p>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.6</span><span class="tl-title">Electrical plant and power management</span><span class="chip">PMS</span></div>
+            <p>Generator sets, an electrical bus, load sharing and breakers, and a blackout-and-recovery scenario for power-management development.</p>
+          </li>
+        </ol>
+        <p class="backlog">Later, unscheduled: aftertreatment, FMI/FMU export, a trace dashboard, MISRA tooling, Python bindings.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="principles-h">
+      <div class="wrap">
+        <div class="kicker">// engineering principles</div>
+        <h2 id="principles-h">Built to be trusted, so it is built to be checked.</h2>
+        <p class="intro">Each principle is enforced by something that can fail: a test, a CI job, or a documented rule.</p>
         <div class="principles">
-          <div class="principle-item">
-            <h3>SIL/HIL Parity</h3>
-            <p>The plant model core never knows whether it is running in a CI pipeline or on an FPGA rig.</p>
+          <div class="principle"><div class="n">01</div><h3>The plant answers honestly</h3><p>Physics in the plant, decisions in a separate engine ECU. If the engine stays alive, it is because your controller and the ECU kept it alive.</p></div>
+          <div class="principle"><div class="n">02</div><h3>Same source, laptop to board</h3><p>The controller zone builds for a Cortex-M4F on every push. A stray <code>printf</code> or <code>double</code> fails the build.</p></div>
+          <div class="principle"><div class="n">03</div><h3>The real protocol</h3><p>TSC1 means what SAE J1939 says. The two project-specific messages are named <code>OC_*</code> and documented as not J1939.</p></div>
+          <div class="principle"><div class="n">04</div><h3>Tests that can fail</h3><p>CI breaks each safety behaviour on purpose and requires the tests to catch it. A test that cannot fail proves nothing.</p></div>
+          <div class="principle"><div class="n">05</div><h3>Every number has a source</h3><p>Each parameter is marked as sourced, estimated or inherited and awaiting a citation. Representative, never presented as calibrated.</p></div>
+          <div class="principle"><div class="n">06</div><h3>Generality is earned</h3><p>A crane diesel and a 60 MW marine two-stroke must share one runtime before any plant interface is frozen.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="scope-h">
+      <div class="wrap">
+        <div class="kicker">// scope</div>
+        <h2 id="scope-h">Honest about what it is.</h2>
+        <div class="scope">
+          <div class="card yes">
+            <h3>It is</h3>
+            <ul>
+              <li><strong>A plant that answers back</strong>, representative of its engine class.</li>
+              <li><strong>A realistic engine-side peer</strong> on a real protocol.</li>
+              <li><strong>A way to arrive at the bench</strong> with working code and a shorter list of things to try.</li>
+              <li><strong>Open and auditable</strong>: Apache-2.0, original protocol code, cited parameters.</li>
+            </ul>
           </div>
-          <div class="principle-item">
-            <h3>General Abstractions</h3>
-            <p>Architectures will be validated across radically different plants, from 4-stroke crane diesels to 60 MW 2-stroke marine engines.</p>
-          </div>
-          <div class="principle-item">
-            <h3>Permissive &amp; Auditable</h3>
-            <p>Licensed under Apache-2.0, including the patent grant. Protocol implementations are original, readable, and open to inspection.</p>
+          <div class="card no">
+            <h3>It is not</h3>
+            <ul>
+              <li><strong>A certified tool.</strong> No ISO 26262 or IEC 61508 argument; never for signing off a calibration.</li>
+              <li><strong>A digital twin.</strong> Mean-value models, not crank-angle resolved combustion.</li>
+              <li><strong>A replacement for a test bench</strong>, or a full J1939 stack.</li>
+              <li><strong>Connected to real machinery. Ever.</strong></li>
+            </ul>
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
 
-    <footer>
-      <span>Open Heavy Machinery · <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">Apache-2.0</a></span>
-      <span><a href="https://github.com/Open-Heavy-Machinery" target="_blank" rel="noopener noreferrer">github.com/Open-Heavy-Machinery</a></span>
-      <span class="disclaimer">
-        Not affiliated with Liebherr or MAN Energy Solutions. Engine designations are used nominatively to identify the modelled plants. SAE J1939 is a published standard and is not redistributed here.
-      </span>
-    </footer>
-  </div>
+    <section aria-labelledby="help-h">
+      <div class="wrap">
+        <div class="kicker">// get involved</div>
+        <h2 id="help-h">Pre-alpha, and the right moment to shape it.</h2>
+        <p class="intro">A well-argued issue is worth more than a pull request right now. Three contributions matter most:</p>
+        <div class="contribute">
+          <div class="card"><h3>Source a parameter</h3><p>Bench access to either reference engine class? Correct a number in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/parameters.md">parameters.md</a> and cite where it comes from.</p></div>
+          <div class="card"><h3>Check a layout</h3><p>Own a copy of SAE J1939-71? Compare it with the <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/bus-interface.md">bus interface</a> and report any byte that disagrees.</p></div>
+          <div class="card"><h3>Bring a controller</h3><p>Point your own machine controller at the simulated engine and <a href="https://github.com/Open-Heavy-Machinery/open-crank/issues">open an issue</a> with what broke, in either one.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>Open Heavy Machinery · <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/LICENSE">Apache-2.0</a></span>
+      <span><a href="https://github.com/Open-Heavy-Machinery">github.com/Open-Heavy-Machinery</a></span>
+      <p class="disclaimer">Not affiliated with Liebherr or MAN Energy Solutions. Engine designations are used nominatively to identify the class of engine being modelled. SAE J1939 is a paywalled standard; no specification text is redistributed, and message layouts are original work from public sources.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var D = {"x0":58,"x1":742,"t0":5.0,"t1":25.0,"p1":[34,228,1250.0,1800.0],"p2":[278,362,0.0,600.0],"t":[5.0,5.05,5.1,5.15,5.2,5.25,5.3,5.35,5.4,5.45,5.5,5.55,5.6,5.65,5.7,5.75,5.8,5.85,5.9,5.95,6.0,6.05,6.1,6.15,6.2,6.25,6.3,6.35,6.4,6.45,6.5,6.55,6.6,6.65,6.7,6.75,6.8,6.85,6.9,6.95,7.0,7.05,7.1,7.15,7.2,7.25,7.3,7.35,7.4,7.45,7.5,7.55,7.6,7.65,7.7,7.75,7.8,7.85,7.9,7.95,8.0,8.05,8.1,8.15,8.2,8.25,8.3,8.35,8.4,8.45,8.5,8.55,8.6,8.65,8.7,8.75,8.8,8.85,8.9,8.95,9.0,9.05,9.1,9.15,9.2,9.25,9.3,9.35,9.4,9.45,9.5,9.55,9.6,9.65,9.7,9.75,9.8,9.85,9.9,9.95,10.0,10.05,10.1,10.15,10.2,10.25,10.3,10.35,10.4,10.45,10.5,10.55,10.6,10.65,10.7,10.75,10.8,10.85,10.9,10.95,11.0,11.05,11.1,11.15,11.2,11.25,11.3,11.35,11.4,11.45,11.5,11.55,11.6,11.65,11.7,11.75,11.8,11.85,11.9,11.95,12.0,12.05,12.1,12.15,12.2,12.25,12.3,12.35,12.4,12.45,12.5,12.55,12.6,12.65,12.7,12.75,12.8,12.85,12.9,12.95,13.0,13.05,13.1,13.15,13.2,13.25,13.3,13.35,13.4,13.45,13.5,13.55,13.6,13.65,13.7,13.75,13.8,13.85,13.9,13.95,14.0,14.05,14.1,14.15,14.2,14.25,14.3,14.35,14.4,14.45,14.5,14.55,14.6,14.65,14.7,14.75,14.8,14.85,14.9,14.95,15.0,15.05,15.1,15.15,15.2,15.25,15.3,15.35,15.4,15.45,15.5,15.55,15.6,15.65,15.7,15.75,15.8,15.85,15.9,15.95,16.0,16.05,16.1,16.15,16.2,16.25,16.3,16.35,16.4,16.45,16.5,16.55,16.6,16.65,16.7,16.75,16.8,16.85,16.9,16.95,17.0,17.05,17.1,17.15,17.2,17.25,17.3,17.35,17.4,17.45,17.5,17.55,17.6,17.65,17.7,17.75,17.8,17.85,17.9,17.95,18.0,18.05,18.1,18.15,18.2,18.25,18.3,18.35,18.4,18.45,18.5,18.55,18.6,18.65,18.7,18.75,18.8,18.85,18.9,18.95,19.0,19.05,19.1,19.15,19.2,19.25,19.3,19.35,19.4,19.45,19.5,19.55,19.6,19.65,19.7,19.75,19.8,19.85,19.9,19.95,20.0,20.05,20.1,20.15,20.2,20.25,20.3,20.35,20.4,20.45,20.5,20.55,20.6,20.65,20.7,20.75,20.8,20.85,20.9,20.95,21.0,21.05,21.1,21.15,21.2,21.25,21.3,21.35,21.4,21.45,21.5,21.55,21.6,21.65,21.7,21.75,21.8,21.85,21.9,21.95,22.0,22.05,22.1,22.15,22.2,22.25,22.3,22.35,22.4,22.45,22.5,22.55,22.6,22.65,22.7,22.75,22.8,22.85,22.9,22.95,23.0,23.05,23.1,23.15,23.2,23.25,23.3,23.35,23.4,23.45,23.5,23.55,23.6,23.65,23.7,23.75,23.8,23.85,23.9,23.95,24.0,24.05,24.1,24.15,24.2,24.25,24.3,24.35,24.4,24.45,24.5,24.55,24.6,24.65,24.7,24.75,24.8,24.85,24.9,24.95,25.0],"rpm":[1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1497.4,1481.4,1453.6,1420.9,1389.6,1363.8,1345.3,1333.8,1329.0,1330.0,1336.0,1345.8,1358.1,1371.3,1384.7,1397.7,1410.1,1421.6,1432.2,1441.7,1450.2,1457.7,1464.2,1470.0,1474.9,1479.1,1482.6,1485.7,1488.2,1490.3,1492.1,1493.5,1494.8,1495.8,1496.6,1497.2,1497.8,1498.2,1498.6,1498.9,1499.1,1499.3,1499.4,1499.5,1499.6,1499.7,1499.8,1499.8,1499.9,1499.9,1499.9,1499.9,1499.9,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1519.6,1580.9,1641.8,1686.1,1712.0,1722.0,1719.8,1708.7,1692.0,1672.1,1650.9,1629.8,1609.8,1591.4,1574.9,1560.5,1548.2,1537.8,1529.2,1522.2,1516.6,1512.1,1508.6,1505.9,1503.9,1502.4,1501.3,1500.6,1500.0,1499.7,1499.5,1499.4,1499.4,1499.4,1499.4,1499.5,1499.5,1499.6,1499.7,1499.7,1499.8,1499.8,1499.8,1499.9,1499.9,1499.9,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0,1500.0],"nm":[1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,30.5,110.6,195.7,270.8,332.2,381.1,419.5,449.7,473.4,492.2,507.1,519.0,528.6,536.3,542.5,547.5,551.6,555.0,557.7,559.8,561.6,563.1,564.3,565.3,566.0,566.7,567.2,567.6,568.0,568.3,568.5,568.7,568.8,569.0,569.1,569.2,569.2,569.3,569.3,569.4,569.4,569.4,569.4,569.4,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,569.5,375.7,190.4,98.8,53.1,30.0,18.0,11.7,8.1,6.1,4.8,4.0,3.4,3.0,2.7,2.5,2.3,2.1,2.0,1.9,1.8,1.8,1.7,1.7,1.6,1.6,1.6,1.6,1.6,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5]};
+      var chart = document.getElementById("chart");
+      var svg = chart && chart.querySelector("svg");
+      if (!svg) return;
+      var hit = svg.querySelector(".hit"), hover = svg.querySelector(".hover");
+      var cross = svg.querySelector(".cross"), ds = svg.querySelector(".hdot-speed"), dl = svg.querySelector(".hdot-load");
+      var tip = document.getElementById("tip");
+      function y(p, v) { return p[1] - (v - p[2]) / (p[3] - p[2]) * (p[1] - p[0]); }
+      function show(evt) {
+        var pt = svg.createSVGPoint(); pt.x = evt.clientX; pt.y = evt.clientY;
+        var loc = pt.matrixTransform(svg.getScreenCTM().inverse());
+        var f = (loc.x - D.x0) / (D.x1 - D.x0);
+        var i = Math.max(0, Math.min(D.t.length - 1, Math.round(f * (D.t.length - 1))));
+        var x = D.x0 + (D.t[i] - D.t0) / (D.t1 - D.t0) * (D.x1 - D.x0);
+        cross.setAttribute("x1", x); cross.setAttribute("x2", x);
+        ds.setAttribute("cx", x); ds.setAttribute("cy", y(D.p1, D.rpm[i]));
+        dl.setAttribute("cx", x); dl.setAttribute("cy", y(D.p2, D.nm[i]));
+        hover.style.opacity = 1;
+        tip.innerHTML = "t = " + D.t[i].toFixed(2) + " s<br>" +
+          '<span class="k" style="background:var(--data-speed)"></span>' + D.rpm[i].toFixed(1) + " rpm<br>" +
+          '<span class="k" style="background:var(--data-load)"></span>' + D.nm[i].toFixed(0) + " Nm";
+        var sb = svg.getBoundingClientRect();
+        var px = (x / svg.viewBox.baseVal.width) * sb.width;
+        var py = (y(D.p1, D.rpm[i]) / svg.viewBox.baseVal.height) * sb.height;
+        tip.style.left = Math.max(70, Math.min(sb.width - 70, px)) + "px";
+        tip.style.top = py - 10 + "px";
+        tip.style.opacity = 1;
+      }
+      function hide() { hover.style.opacity = 0; tip.style.opacity = 0; }
+      hit.addEventListener("pointermove", show);
+      hit.addEventListener("pointerdown", show);
+      hit.addEventListener("pointerleave", hide);
+
+      document.querySelectorAll("[data-copy]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var text = document.getElementById(btn.getAttribute("data-copy")).innerText
+            .split("\n").filter(function (l) { return l.indexOf("#") !== 0; })
+            .map(function (l) { return l.replace(/^\$ /, ""); }).join("\n");
+          if (!navigator.clipboard) return;
+          navigator.clipboard.writeText(text).then(function () {
+            btn.textContent = "copied";
+            setTimeout(function () { btn.textContent = "copy"; }, 1500);
+          });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
