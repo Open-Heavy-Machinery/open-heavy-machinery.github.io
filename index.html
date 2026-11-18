@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="dark">
   <title>Open Heavy Machinery · open-crank, a heavy-duty diesel that answers back</title>
-  <meta name="description" content="open-crank simulates a heavy-duty diesel engine, its engine ECU and its hydraulic load, and speaks SAE J1939 over CAN. Develop and test machine-controller firmware on a laptop and in CI, then take the same C source to an emulator and a real board.">
+  <meta name="description" content="Open Heavy Machinery: open tools to practise and develop embedded control for heavy machinery, without access to the machine. open-crank is a heavy-duty diesel that answers back: connect your own firmware over J1939 and practise against an engine you could never keep at home.">
   <meta name="theme-color" content="#0d1117">
   <link rel="canonical" href="https://open-heavy-machinery.github.io/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d1117'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23f0883e' stroke-width='3'/%3E%3Ccircle cx='16' cy='9.5' r='3' fill='%23f0883e'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23f0883e'/%3E%3C/svg%3E">
@@ -14,7 +14,7 @@
   <meta property="og:site_name" content="Open Heavy Machinery">
   <meta property="og:url" content="https://open-heavy-machinery.github.io/">
   <meta property="og:title" content="open-crank: a heavy-duty diesel that answers back">
-  <meta property="og:description" content="Open-source engine plant, simulated engine ECU and SAE J1939 bench for developing machine controllers, from a laptop to a real board. No engine required.">
+  <meta property="og:description" content="Connect your own firmware over J1939 and practise against an engine you could never keep at home. Part of Open Heavy Machinery: open tools to practise and develop embedded control for heavy machinery, without access to the machine.">
   <meta property="og:image" content="https://open-heavy-machinery.github.io/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -88,6 +88,13 @@
     }
     .topnav a:hover { color: var(--text); background: var(--surface); }
     @media (max-width: 720px) { .topnav a:not(.gh) { display: none; } }
+
+    /* ---------- organisation band ---------- */
+    .org { background: var(--surface); border-bottom: 1px solid var(--hairline); }
+    .org .wrap { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.4rem 1.25rem; padding-top: 0.75rem; padding-bottom: 0.75rem; }
+    .org p { font-size: 0.88rem; color: var(--muted); }
+    .org .projects { font-family: var(--mono); font-size: 0.8rem; white-space: nowrap; }
+    .org .projects a { text-decoration: none; }
 
     /* ---------- hero ---------- */
     .hero {
@@ -317,6 +324,7 @@
       background: var(--bg); border: 2px solid var(--border);
     }
     .timeline > li.current::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(240, 136, 62, 0.2); }
+    .timeline > li.done::before { background: var(--ok); border-color: var(--ok); box-shadow: 0 0 0 4px rgba(63, 185, 80, 0.18); }
     .tl-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.8rem; margin-bottom: 0.3rem; }
     .tl-ver { font-family: var(--mono); font-weight: 700; color: var(--text); }
     .tl-title { font-weight: 600; color: var(--text); }
@@ -325,7 +333,11 @@
     .pending li { color: var(--muted); padding-left: 1.4rem; position: relative; margin-bottom: 0.2rem; }
     .pending li::before { content: "○"; position: absolute; left: 0; color: var(--accent); }
     .pending li.done::before { content: "✓"; color: var(--ok); }
-    .backlog { margin-top: 2rem; font-size: 0.9rem; color: var(--muted); }
+    .side-track { margin-top: 2.2rem; border: 1px dashed var(--border); border-radius: 10px; padding: 1rem 1.2rem; }
+    .side-track p { font-size: 0.95rem; max-width: 78ch; }
+    .backlog { margin-top: 2rem; font-size: 0.9rem; color: var(--muted); max-width: 78ch; }
+    .backlog + .backlog { margin-top: 0.6rem; }
+    .backlog strong { color: var(--text); font-weight: 600; }
 
     /* principles */
     .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); border-radius: 12px; overflow: hidden; }
@@ -381,13 +393,20 @@
   </header>
 
   <main id="main">
+    <div class="org">
+      <div class="wrap">
+        <p>Open tools to practise and develop embedded control for heavy machinery, without access to the machine.</p>
+        <p class="projects">Projects: <a href="#top" aria-current="page">open-crank</a></p>
+      </div>
+    </div>
+
     <div class="hero" id="top">
       <div class="wrap">
         <div>
           <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.1<span class="long"> · Level 1 vertical slice</span></div>
           <h1>A heavy-duty diesel that <em>answers back.</em></h1>
           <p class="lede">
-            <strong>open-crank</strong> simulates a heavy-duty diesel engine, its engine ECU and its hydraulic load, and speaks <strong>SAE J1939 over CAN</strong>. Develop, test and break machine-controller firmware on a laptop and in CI, then take the same C source to an emulator and a real board. No engine required.
+            Connect your own firmware over <strong>J1939</strong> and practise against an engine you could never keep at home. <strong>open-crank</strong> simulates the engine, its ECU and its hydraulic load: develop, test and break your controller on a laptop and in CI today, and on a real board next. No engine required.
           </p>
           <div class="cta">
             <a class="btn primary" href="https://github.com/Open-Heavy-Machinery/open-crank">
@@ -572,9 +591,9 @@
               <rect class="box-dut" x="10" y="80" width="168" height="170" rx="10"/>
               <text class="t" x="26" y="112">Your controller</text>
               <text class="s" x="26" y="130">device under test</text>
-              <text class="m" x="26" y="170">laptop  · v0.1</text>
-              <text class="m" x="26" y="190">Renode  · v0.2</text>
-              <text class="m" x="26" y="210">STM32G4 · v0.3</text>
+              <text class="m" x="26" y="170">laptop · v0.1</text>
+              <text class="m" x="26" y="190">STM32G4 · v0.2</text>
+              <text class="m" x="26" y="210">Renode · track R</text>
               <text class="s" x="26" y="236">same C source</text>
               <!-- bus -->
               <line class="bus" x1="214" y1="34" x2="214" y2="300"/>
@@ -628,7 +647,7 @@
         <div class="zones">
           <div class="zone"><h3>portable/</h3><p>The controller and the J1939 codec. Depends on <code>stdint.h</code>, <code>stdbool.h</code>, <code>stddef.h</code> and nothing else. Goes to firmware.</p></div>
           <div class="zone"><h3>sim/</h3><p>Plant physics, the engine ECU, loads, the bench, scenarios. Host only, double precision, never reads a clock.</p></div>
-          <div class="zone"><h3>platforms/</h3><p>Thin glue per target: headless host, Linux SocketCAN today; Renode, STM32G4 and FPGA next.</p></div>
+          <div class="zone"><h3>platforms/</h3><p>Thin glue per target: headless host, Linux SocketCAN today; STM32G4 next, then FPGA; Renode in parallel.</p></div>
         </div>
         <p class="zone-rule">Dependencies point one way, and CI enforces it: if <code>portable/</code> ever picks up a <code>printf</code>, a socket or a software-emulated <code>double</code>, the build fails.</p>
       </div>
@@ -664,8 +683,8 @@
         <h2 id="roadmap-h">From a laptop to an FPGA rig, one finishable step at a time.</h2>
         <p class="intro">No dates. A milestone is done when its exit criteria are met, and each one is small enough to finish and useful on its own. The full plan, with criteria, is in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/ROADMAP.md">ROADMAP.md</a>.</p>
         <ol class="timeline">
-          <li class="current">
-            <div class="tl-head"><span class="tl-ver">v0.1</span><span class="tl-title">Level 1 vertical slice, in CI</span><span class="chip now">implemented · checked</span></div>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.1</span><span class="tl-title">Level 1 vertical slice, in CI</span><span class="chip now">done</span></div>
             <p>Plant, simulated engine ECU, J1939 codec, portable controller, scenarios, closed-loop tests and the Cortex-M4F portability check.</p>
             <ul class="pending">
               <li class="done">closed-loop scenarios, portability, mutation checks, parameter provenance</li>
@@ -674,27 +693,44 @@
             </ul>
           </li>
           <li>
-            <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Firmware in the loop</span><span class="chip">Renode</span></div>
-            <p>The same controller source, compiled for a microcontroller and run in Renode, regulates the same engine; speed traces must agree with the host build within a stated tolerance, headless in CI. First risk to retire: whether Renode models the target's CAN peripheral.</p>
+            <div class="tl-head"><span class="tl-ver">v0.1.x</span><span class="tl-title">MISRA-oriented checks and stack usage in CI</span><span class="chip">cppcheck · -fstack-usage</span></div>
+            <p>The free cppcheck MISRA addon over <code>portable/</code>, findings by rule number only, each one fixed or documented as a deviation; and the stack usage of every function in the Cortex-M4F build. MISRA-oriented, because the addon covers only part of the rules: passing it does not imply compliance.</p>
           </li>
           <li>
-            <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Real board on the bus, fault injection</span><span class="chip">STM32G4 + USB-CAN</span></div>
-            <p>A physical board runs the portable controller over a real CAN link. CAN dropout, jitter, corrupted frames, faults reported by the engine (DM1), TSC1 counter and checksum, and measured end-to-end latency. Real silicon, never real machinery.</p>
+            <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Reference board on the bus</span><span class="chip">STM32G431 + USB-CAN</span></div>
+            <p>A cheap reference board, an STM32G431 with a CAN transceiver and a SocketCAN USB-CAN adapter, with a bill of materials and a bring-up guide from scratch, running the portable controller unchanged. Latency measured first, tolerances written down before comparing, then the hoist scenario against the wall-clock SIL; the worst observed execution time (measured with the DWT cycle counter; not a proven bound) and stack of the controller step on the board. Real silicon, never real machinery.</p>
           </li>
           <li>
-            <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Level 2 and hard real time</span><span class="chip">FPGA</span></div>
-            <p>Your firmware becomes the engine ECU: 60-2 crank and cam waveforms and deterministic I/O from an FPGA, with a stated and measured jitter budget. The plant stays on a CPU; the FPGA does timing.</p>
+            <div class="tl-head"><span class="tl-ver">v0.2.1</span><span class="tl-title">Acceptance suite over the bus</span><span class="chip">any controller</span></div>
+            <p>A runner that grades any device under test by its CAN frames alone, with a pass/fail report per scenario. Criteria use only what is observable on the bus, timed from the injected event: within T ms of losing EEC1, TSC1 is sent with override disabled and <code>OC_PUMP_CMD</code> displacement is 0; no TSC1 ever requests more than high idle. The reference controller must pass; a deliberately broken one must fail.</p>
           </li>
           <li>
-            <div class="tl-head"><span class="tl-ver">v0.5</span><span class="tl-title">A second, radically different plant</span><span class="chip">marine 2-stroke</span></div>
+            <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Robustness on the board</span><span class="chip">fault injection</span></div>
+            <p>Lost, late and corrupted frames, bus-off, DM1, and a watchdog with a defined state after reset. Numbered safety requirements, each traced to a test, and a written safe state. Optionally, a black box and configuration in EEPROM.</p>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Level 2: your firmware as the engine ECU</span><span class="chip">second MCU or FPGA</span></div>
+            <p>The simulated ECU steps aside and fuel comes from your injector pulses. 60-2 crank and cam waveforms, analog sensors and injector capture from a second MCU (cheap) or an FPGA (to scale), with a stated and measured jitter budget. The plant stays on a CPU.</p>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.5</span><span class="tl-title">Two engines on one machine</span><span class="chip">J1939-81</span></div>
+            <p>Two engines on one bench with distinct source addresses, J1939 address claiming and its conflicts. A fault on one must not disturb the other. The bench is generalised, not the plant.</p>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.6</span><span class="tl-title">Marine 2-stroke plant</span><span class="chip">propeller load</span></div>
             <p>A MAN B&amp;W 9G95ME-C10.6-class engine, about 60 MW at 70–80 rpm, driving a propeller through its own ME-style control interface. The plant interface is extracted from what both engines really share, not guessed before.</p>
           </li>
           <li>
-            <div class="tl-head"><span class="tl-ver">v0.6</span><span class="tl-title">Electrical plant and power management</span><span class="chip">PMS</span></div>
-            <p>Generator sets, an electrical bus, load sharing and breakers, and a blackout-and-recovery scenario for power-management development.</p>
+            <div class="tl-head"><span class="tl-ver">v0.7</span><span class="tl-title">Electrical plant and power management</span><span class="chip">PMS</span></div>
+            <p>Generator sets on the multi-engine bench, an electrical bus, load sharing and breakers, and a blackout-and-recovery scenario for power-management development.</p>
           </li>
         </ol>
-        <p class="backlog">Later, unscheduled: aftertreatment, FMI/FMU export, a trace dashboard, MISRA tooling, Python bindings.</p>
+        <div class="side-track">
+          <div class="tl-head"><span class="tl-ver">Track R</span><span class="tl-title">Firmware in the loop in Renode</span><span class="chip">parallel · after v0.2</span></div>
+          <p>The board's firmware in an emulator, headless in CI, checked against the board's own trace. For the G4, a platform description of our own on Renode's STM32 FDCAN model, assumed but not yet verified to match; an STM32H7 as fallback. For anyone without a board, the free path is the SIL.</p>
+        </div>
+        <p class="backlog"><strong>Beyond 1.0</strong>, with no dates: 3D machines in separate repositories, such as a generic crane in Gazebo or O3DE with ROS 2, where every signal has exactly one owner, simulated or real.</p>
+        <p class="backlog">Later, unscheduled: aftertreatment, FMI/FMU export, a trace dashboard, Python bindings.</p>
       </div>
     </section>
 
@@ -726,6 +762,8 @@
               <li><strong>A realistic engine-side peer</strong> on a real protocol.</li>
               <li><strong>A way to arrive at the bench</strong> with working code and a shorter list of things to try.</li>
               <li><strong>Open and auditable</strong>: Apache-2.0, original protocol code, cited parameters.</li>
+              <li><strong>Bring your own firmware</strong>: any board, RTOS or language that speaks CAN.</li>
+              <li><strong>A place to practise critical-firmware techniques</strong> (not a certified tool): acceptance tests over the bus, MISRA-oriented, stack and timing checks, planned from v0.1.x.</li>
             </ul>
           </div>
           <div class="card no">
@@ -749,7 +787,7 @@
         <div class="contribute">
           <div class="card"><h3>Source a parameter</h3><p>Bench access to either reference engine class? Correct a number in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/parameters.md">parameters.md</a> and cite where it comes from.</p></div>
           <div class="card"><h3>Check a layout</h3><p>Own a copy of SAE J1939-71? Compare it with the <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/bus-interface.md">bus interface</a> and report any byte that disagrees.</p></div>
-          <div class="card"><h3>Bring a controller</h3><p>Point your own machine controller at the simulated engine and <a href="https://github.com/Open-Heavy-Machinery/open-crank/issues">open an issue</a> with what broke, in either one.</p></div>
+          <div class="card"><h3>Bring a controller</h3><p>Point your own machine controller at the simulated engine through the <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/bus-interface.md">bus contract</a>, and <a href="https://github.com/Open-Heavy-Machinery/open-crank/issues">open an issue</a> with what broke, in either one. An acceptance suite that grades any controller by its frames is planned for v0.2.1.</p></div>
         </div>
       </div>
     </section>
