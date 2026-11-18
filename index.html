@@ -93,11 +93,8 @@
     .org { background: var(--surface); border-bottom: 1px solid var(--hairline); }
     .org .wrap { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.4rem 1.25rem; padding-top: 0.75rem; padding-bottom: 0.75rem; }
     .org p { font-size: 0.88rem; color: var(--muted); }
-    .org strong { color: var(--text); font-weight: 600; }
-    .org .sep { color: var(--border); margin: 0 0.55rem; }
     .org .projects { font-family: var(--mono); font-size: 0.8rem; white-space: nowrap; }
     .org .projects a { text-decoration: none; }
-    @media (max-width: 620px) { .org strong { display: block; } .org .sep { display: none; } }
 
     /* ---------- hero ---------- */
     .hero {
@@ -398,7 +395,7 @@
   <main id="main">
     <div class="org">
       <div class="wrap">
-        <p><strong>Open Heavy Machinery</strong><span class="sep" aria-hidden="true">·</span>Open tools to practise and develop embedded control for heavy machinery, without access to the machine.</p>
+        <p>Open tools to practise and develop embedded control for heavy machinery, without access to the machine.</p>
         <p class="projects">Projects: <a href="#top" aria-current="page">open-crank</a></p>
       </div>
     </div>
@@ -701,11 +698,11 @@
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Reference board on the bus</span><span class="chip">STM32G431 + USB-CAN</span></div>
-            <p>A cheap reference board, an STM32G431 with a CAN transceiver and a SocketCAN USB-CAN adapter, with a bill of materials and a bring-up guide from scratch, running the portable controller unchanged. Latency measured first, tolerances written down before comparing, then the hoist scenario against the wall-clock SIL; execution time and stack of the controller step measured on the board. Real silicon, never real machinery.</p>
+            <p>A cheap reference board, an STM32G431 with a CAN transceiver and a SocketCAN USB-CAN adapter, with a bill of materials and a bring-up guide from scratch, running the portable controller unchanged. Latency measured first, tolerances written down before comparing, then the hoist scenario against the wall-clock SIL; the worst observed execution time (measured with the DWT cycle counter; not a proven bound) and stack of the controller step on the board. Real silicon, never real machinery.</p>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.2.1</span><span class="tl-title">Acceptance suite over the bus</span><span class="chip">any controller</span></div>
-            <p>A runner that grades any device under test by its CAN frames alone, with a pass/fail report per scenario: override released after EEC1 is lost, pump at zero in a fault, never above high idle. The reference controller must pass; a deliberately broken one must fail.</p>
+            <p>A runner that grades any device under test by its CAN frames alone, with a pass/fail report per scenario. Criteria use only what is observable on the bus, timed from the injected event: within T ms of losing EEC1, TSC1 is sent with override disabled and <code>OC_PUMP_CMD</code> displacement is 0; no TSC1 ever requests more than high idle. The reference controller must pass; a deliberately broken one must fail.</p>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Robustness on the board</span><span class="chip">fault injection</span></div>
