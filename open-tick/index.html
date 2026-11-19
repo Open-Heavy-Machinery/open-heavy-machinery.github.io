@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>open-tick · the beat a simulated machine keeps · Open Heavy Machinery</title>
+  <meta name="description" content="open-tick is the machine-independent core of Open Heavy Machinery: one clock, scenarios as data, traces and CAN / CAN FD bridges in C11, so real firmware can be tested against any simulated machine. Pin-level bridges on a Raspberry Pi Pico and a Tang Nano 20K are planned.">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="canonical" href="https://open-heavy-machinery.github.io/open-tick/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d1117'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23f0883e' stroke-width='3'/%3E%3Ccircle cx='16' cy='9.5' r='3' fill='%23f0883e'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23f0883e'/%3E%3C/svg%3E">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Open Heavy Machinery">
+  <meta property="og:url" content="https://open-heavy-machinery.github.io/open-tick/">
+  <meta property="og:title" content="open-tick: the beat a simulated machine keeps">
+  <meta property="og:description" content="One clock, scenarios as data, traces and CAN / CAN FD bridges in C11. open-crank runs on it with byte-identical traces. Part of Open Heavy Machinery.">
+  <meta property="og:image" content="https://open-heavy-machinery.github.io/open-tick/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="open-tick: six scenarios, six byte-identical traces">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="../" aria-label="Open Heavy Machinery, home">
+        <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="11" fill="none" stroke="#f0883e" stroke-width="3"/>
+          <line x1="16" y1="16" x2="16" y2="8.5" stroke="#f0883e" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="16" cy="8.5" r="3.2" fill="#f0883e"/>
+          <circle cx="16" cy="16" r="2.2" fill="#0d1117" stroke="#f0883e" stroke-width="2"/>
+        </svg>
+        Open Heavy Machinery
+      </a>
+      <nav class="topnav" aria-label="Primary">
+        <a href="#today">What runs</a>
+        <a href="#how">How it works</a>
+        <a href="#roadmap">Roadmap</a>
+        <a class="gh" href="https://github.com/Open-Heavy-Machinery/open-tick">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="org">
+      <div class="wrap">
+        <p>Open tools to practise and develop embedded control for machines you cannot keep at home, starting with heavy machinery.</p>
+        <p class="projects">Projects: <a href="./" aria-current="page">open-tick</a> · <a href="../open-crank/">open-crank</a> · <span class="soon">open-robots (planned)</span></p>
+      </div>
+    </div>
+
+    <div class="hero" id="top">
+      <div class="wrap">
+        <div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.1<span class="long"> · extraction done</span></div>
+          <h1>The beat a simulated machine <em>keeps.</em></h1>
+          <p class="lede">
+            <strong>open-tick</strong> is the part of a simulated machine that does not depend on the machine: one clock that never reads the wall, scenarios as data, traces, and the bridges that carry signals to your microcontroller. Applications bring the physics; <a href="../open-crank/">open-crank</a>, a heavy-duty diesel, already runs on it.
+          </p>
+          <div class="cta">
+            <a class="btn primary" href="https://github.com/Open-Heavy-Machinery/open-tick">
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.93-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.19c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+              open-tick on GitHub
+            </a>
+            <a class="btn" href="#start">Run it in a minute</a>
+          </div>
+          <ul class="facts" aria-label="Key facts">
+            <li>C11, Apache-2.0</li>
+            <li>core builds on any C11 host</li>
+            <li>open-crank runs on it</li>
+          </ul>
+        </div>
+
+        <figure class="term" aria-labelledby="traces-caption">
+          <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>open-crank#1 · CI · traces job</span></div>
+          <div class="code" style="border: 0; border-radius: 0;">
+<pre><span class="p">$ </span>head/tools/compare_traces.sh \
+    build-base build-head head/scenarios
+identical       cold_start
+identical       engine_status_loss
+identical       hoist_step
+identical       override_ignored
+identical       overspeed
+identical       speed_command_loss
+
+6 compared, 0 different</pre>
+          </div>
+          <figcaption class="term-foot" id="traces-caption">The CI job that settled the extraction: every open-crank scenario, run before and after moving its runtime into open-tick, compared byte for byte.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <section aria-labelledby="why-h">
+      <div class="wrap why">
+        <div>
+          <div class="kicker">// why</div>
+          <h2 id="why-h">To a microcontroller, the world is signals.</h2>
+          <p>Voltages on pins, edges with timing, frames on a bus. Your firmware cannot see the crane, the robot or the train behind them. If something produces those signals faithfully enough, it cannot tell a simulated machine from a real one.</p>
+          <p>Writing the first machine, a diesel engine, meant writing a clock, scenarios, traces and a CAN bridge, and none of them cared about diesel. open-tick is that part, so the next machine does not have to write it again.</p>
+        </div>
+        <p class="quote">"One clock, one step, any machine, and an exact statement of how faithful it is."<small>The promise open-tick is built to keep. The last part is planned.</small></p>
+      </div>
+    </section>
+
+    <section id="today" aria-labelledby="today-h">
+      <div class="wrap">
+        <div class="kicker">// what runs today · v0.1</div>
+        <h2 id="today-h">The runtime of a machine, without the machine.</h2>
+        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Every claim below points at the code that backs it.</p>
+        <div class="grid">
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></div>
+            <h3>One clock that never reads the wall</h3>
+            <p>Simulated time is a 64-bit count of nanoseconds that whoever runs the machine advances. A driver only decides how fast: as fast as the CPU can, or paced by the wall clock, measuring how late it wakes.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/timebase.h">timebase.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/host/include/opentick/host/driver.h">driver.h</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg></div>
+            <h3>Scenarios are data</h3>
+            <p>Each application registers its signal names; scenarios are plain CSV played at the start of each step. A typo fails loudly with its line number instead of running a different test.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/scenario.h">scenario.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/player.h">player.h</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12h20"/><path d="M6 12V7M10 12v5M14 12V7M18 12v5"/></svg></div>
+            <h3>CAN and CAN FD bridges</h3>
+            <p>Frames up to 64 bytes, in memory for tests and CI, or on Linux SocketCAN for a <code>vcan</code> bus or a USB-CAN adapter. CI round-trips classic and FD frames on <code>vcan</code>.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/can.h">can.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/host/include/opentick/host/socketcan.h">socketcan.h</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></div>
+            <h3>Traces that refuse to shift</h3>
+            <p>Applications declare their columns once. A value of the wrong kind, a missing column or text that would break the CSV is reported, instead of plotting the wrong signal under the right heading.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/trace.h">trace.h</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9l3 3-3 3M13 15h3"/></svg></div>
+            <h3>A core that builds anywhere</h3>
+            <p>The core is ISO C11 and its standard library only: no OS headers, no clocks, no sockets. CI checks the rule and builds the core on macOS, where the Linux host zone is left out.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/tools/check_deps.sh">tools/check_deps.sh</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div>
+            <h3>Tests that can fail</h3>
+            <p>Sanitizers, gcc and clang, and 18 deliberate mutations: CI breaks each behaviour applications rely on and requires the tests to notice.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/tools/mutation_check.sh">tools/mutation_check.sh</a></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="see-h">
+      <div class="wrap">
+        <div class="kicker">// see it run</div>
+        <h2 id="see-h">A flywheel, a controller, and a lost bus.</h2>
+        <p class="intro"><code>otk-flywheel</code> is the smallest machine that uses every module: a DC motor spins a flywheel, and a toy speed controller holds the speed over CAN through the in-memory bridge. At 4 s the scenario cuts the speed frames. This is its trace, not an illustration.</p>
+        <div class="figure">
+          <div class="stats">
+            <div class="stat"><div class="value">500</div><div class="label">steps of 10 ms in the 5 s scenario</div></div>
+            <div class="stat"><div class="value">110 ms</div><div class="label">from the last speed frame to the safe state</div></div>
+            <div class="stat"><div class="value">2 → 1</div><div class="label">two free-running runs, one byte-identical trace</div></div>
+            <div class="stat"><div class="value">5.00 s</div><div class="label">the same run, paced by the wall clock</div></div>
+          </div>
+          <div class="legend" aria-hidden="true"><span class="l-speed">speed</span><span class="l-target">target</span><span class="l-duty">duty</span></div>
+          <p class="scroll-hint">Swipe the chart sideways to see all of it.</p>
+          <div class="chart">
+            <svg class="chart-svg" viewBox="0 0 760 400" role="img" aria-labelledby="fw-title fw-desc">
+              <title id="fw-title">otk-flywheel: speed and motor duty, with a fault at 4 s</title>
+              <desc id="fw-desc">The controller brings the flywheel to 1500 rpm. At 1.5 s a 0.3 Nm load lands: speed dips to 1415 rpm and the controller raises the duty from 51 to 71 percent. At 3 s the target becomes 2000 rpm. At 4.0 s the speed frames are cut; 110 ms later, at 4.11 s, the controller declares a fault and drops the duty to zero, and the flywheel stops at 4.70 s.</desc>
+              <rect class="fault" x="605.2" y="20" width="136.8" height="342"/>
+              <text class="fault-label" x="611.2" y="31">speed frames lost</text>
+              <line class="grid" x1="58" y1="228.0" x2="742" y2="228.0"/><text class="tick" x="50" y="232.0" text-anchor="end">0</text>
+              <line class="grid" x1="58" y1="183.9" x2="742" y2="183.9"/><text class="tick" x="50" y="187.9" text-anchor="end">500</text>
+              <line class="grid" x1="58" y1="139.8" x2="742" y2="139.8"/><text class="tick" x="50" y="143.8" text-anchor="end">1000</text>
+              <line class="grid" x1="58" y1="95.7" x2="742" y2="95.7"/><text class="tick" x="50" y="99.7" text-anchor="end">1500</text>
+              <line class="grid" x1="58" y1="51.6" x2="742" y2="51.6"/><text class="tick" x="50" y="55.6" text-anchor="end">2000</text>
+              <line class="grid" x1="58" y1="362.0" x2="742" y2="362.0"/><text class="tick" x="50" y="366.0" text-anchor="end">0</text>
+              <line class="grid" x1="58" y1="320.0" x2="742" y2="320.0"/><text class="tick" x="50" y="324.0" text-anchor="end">50</text>
+              <line class="grid" x1="58" y1="278.0" x2="742" y2="278.0"/><text class="tick" x="50" y="282.0" text-anchor="end">100</text>
+              <text class="tick" x="58.0" y="384" text-anchor="middle">0 s</text>
+              <text class="tick" x="194.8" y="384" text-anchor="middle">1 s</text>
+              <text class="tick" x="331.6" y="384" text-anchor="middle">2 s</text>
+              <text class="tick" x="468.4" y="384" text-anchor="middle">3 s</text>
+              <text class="tick" x="605.2" y="384" text-anchor="middle">4 s</text>
+              <text class="tick" x="742.0" y="384" text-anchor="middle">5 s</text>
+              <text class="panel-title" x="58" y="16">Flywheel speed, rpm</text>
+              <text class="panel-title" x="58" y="266">Motor duty applied, %</text>
+              <path class="line line-target" d="M58.0,95.7 L468.4,95.7 L468.4,51.6 L742.0,51.6"/>
+              <path class="line line-speed" d="M58.0,228.0 L60.7,228.0 L63.5,215.6 L66.2,203.9 L68.9,192.7 L71.7,182.1 L74.4,171.9 L77.2,162.2 L79.9,153.0 L82.6,144.2 L85.4,135.9 L88.1,129.2 L90.8,124.2 L93.6,120.5 L96.3,117.6 L99.0,115.4 L101.8,113.7 L104.5,112.3 L107.2,111.1 L110.0,110.2 L112.7,109.3 L115.5,108.6 L118.2,108.0 L120.9,107.5 L123.7,107.0 L126.4,106.5 L129.1,106.0 L131.9,105.6 L134.6,105.2 L137.3,104.9 L140.1,104.5 L142.8,104.2 L145.6,103.8 L148.3,103.5 L151.0,103.2 L153.8,102.9 L156.5,102.7 L159.2,102.4 L162.0,102.1 L164.7,101.9 L167.4,101.6 L170.2,101.4 L172.9,101.2 L175.6,101.0 L178.4,100.8 L181.1,100.6 L183.9,100.4 L186.6,100.3 L189.3,100.1 L192.1,99.9 L194.8,99.8 L197.5,99.6 L200.3,99.5 L203.0,99.3 L205.7,99.2 L208.5,99.1 L211.2,99.0 L214.0,98.9 L216.7,98.8 L219.4,98.7 L222.2,98.5 L224.9,98.4 L227.6,98.3 L230.4,98.2 L233.1,98.2 L235.8,98.0 L238.6,97.9 L241.3,97.8 L244.0,97.7 L246.8,97.7 L249.5,97.6 L252.3,97.6 L255.0,97.5 L257.7,97.4 L260.5,97.3 L263.2,97.3 L265.9,99.6 L268.7,101.1 L271.4,102.1 L274.1,102.7 L276.9,103.1 L279.6,103.2 L282.4,103.2 L285.1,103.2 L287.8,103.1 L290.6,102.9 L293.3,102.8 L296.0,102.5 L298.8,102.3 L301.5,102.1 L304.2,101.9 L307.0,101.7 L309.7,101.5 L312.4,101.3 L315.2,101.1 L317.9,100.9 L320.7,100.7 L323.4,100.5 L326.1,100.3 L328.9,100.1 L331.6,99.9 L334.3,99.8 L337.1,99.6 L339.8,99.5 L342.5,99.4 L345.3,99.2 L348.0,99.1 L350.8,99.0 L353.5,98.9 L356.2,98.8 L359.0,98.7 L361.7,98.6 L364.4,98.4 L367.2,98.4 L369.9,98.3 L372.6,98.2 L375.4,98.1 L378.1,98.0 L380.8,97.9 L383.6,97.8 L386.3,97.7 L389.1,97.6 L391.8,97.6 L394.5,97.5 L397.3,97.4 L400.0,97.4 L402.7,97.3 L405.5,97.3 L408.2,97.2 L410.9,97.1 L413.7,97.1 L416.4,97.1 L419.2,97.0 L421.9,96.9 L424.6,96.9 L427.4,96.8 L430.1,96.8 L432.8,96.8 L435.6,96.7 L438.3,96.7 L441.0,96.6 L443.8,96.6 L446.5,96.6 L449.2,96.6 L452.0,96.6 L454.7,96.5 L457.5,96.5 L460.2,96.5 L462.9,96.4 L465.7,96.4 L468.4,96.4 L471.1,96.3 L473.9,92.7 L476.6,89.3 L479.3,86.0 L482.1,82.9 L484.8,79.9 L487.6,77.1 L490.3,74.4 L493.0,71.8 L495.8,69.4 L498.5,67.0 L501.2,64.8 L504.0,62.8 L506.7,61.4 L509.4,60.2 L512.2,59.3 L514.9,58.6 L517.6,58.1 L520.4,57.7 L523.1,57.3 L525.9,56.9 L528.6,56.7 L531.3,56.5 L534.1,56.2 L536.8,56.0 L539.5,55.8 L542.3,55.6 L545.0,55.5 L547.7,55.3 L550.5,55.2 L553.2,55.1 L556.0,54.9 L558.7,54.8 L561.4,54.7 L564.2,54.5 L566.9,54.4 L569.6,54.3 L572.4,54.2 L575.1,54.1 L577.8,54.0 L580.6,53.9 L583.3,53.9 L586.0,53.8 L588.8,53.7 L591.5,53.6 L594.3,53.5 L597.0,53.5 L599.7,53.4 L602.5,53.3 L605.2,53.3 L607.9,53.2 L610.7,53.1 L613.4,53.1 L616.1,53.0 L618.9,52.9 L621.6,58.3 L624.4,69.0 L627.1,79.2 L629.8,88.9 L632.6,98.1 L635.3,106.9 L638.0,115.2 L640.8,123.2 L643.5,130.8 L646.2,138.1 L649.0,145.0 L651.7,151.6 L654.4,157.8 L657.2,163.8 L659.9,169.5 L662.7,174.9 L665.4,180.1 L668.1,185.0 L670.9,189.7 L673.6,194.2 L676.3,198.4 L679.1,202.5 L681.8,206.4 L684.5,210.0 L687.3,213.5 L690.0,216.9 L692.8,220.1 L695.5,223.1 L698.2,226.0 L701.0,228.0 L703.7,228.0 L706.4,228.0 L709.2,228.0 L711.9,228.0 L714.6,228.0 L717.4,228.0 L720.1,228.0 L722.8,228.0 L725.6,228.0 L728.3,228.0 L731.1,228.0 L733.8,228.0 L736.5,228.0 L739.3,228.0 L742.0,228.0"/>
+              <path class="line line-duty" d="M58.0,362.0 L60.7,362.0 L63.5,278.0 L66.2,278.0 L68.9,278.0 L71.7,278.0 L74.4,278.0 L77.2,278.0 L79.9,278.0 L82.6,278.0 L85.4,278.0 L88.1,289.3 L90.8,298.2 L93.6,304.0 L96.3,308.7 L99.0,311.6 L101.8,313.7 L104.5,315.4 L107.2,316.6 L110.0,317.5 L112.7,317.9 L115.5,318.7 L118.2,318.7 L120.9,319.2 L123.7,319.2 L126.4,319.2 L129.1,319.2 L131.9,319.6 L134.6,319.2 L137.3,319.6 L140.1,319.6 L142.8,319.2 L145.6,319.2 L148.3,319.6 L151.0,319.2 L153.8,319.6 L156.5,319.6 L159.2,319.2 L162.0,319.2 L164.7,319.6 L167.4,319.2 L170.2,319.2 L172.9,319.2 L175.6,319.2 L178.4,319.2 L181.1,319.2 L183.9,319.2 L186.6,319.2 L189.3,319.2 L192.1,319.2 L194.8,319.2 L197.5,319.2 L200.3,319.2 L203.0,319.2 L205.7,319.2 L208.5,319.2 L211.2,319.2 L214.0,319.2 L216.7,319.2 L219.4,319.2 L222.2,318.7 L224.9,319.2 L227.6,319.2 L230.4,319.2 L233.1,319.2 L235.8,318.7 L238.6,318.7 L241.3,318.7 L244.0,318.7 L246.8,318.7 L249.5,319.2 L252.3,319.2 L255.0,319.2 L257.7,318.7 L260.5,318.7 L263.2,319.2 L265.9,316.6 L268.7,312.4 L271.4,309.9 L274.1,307.8 L276.9,306.6 L279.6,305.3 L282.4,304.5 L285.1,304.0 L287.8,303.6 L290.6,303.2 L293.3,303.2 L296.0,302.8 L298.8,302.8 L301.5,302.8 L304.2,302.8 L307.0,302.8 L309.7,302.4 L312.4,302.4 L315.2,302.4 L317.9,302.4 L320.7,302.4 L323.4,302.4 L326.1,302.4 L328.9,302.4 L331.6,302.4 L334.3,302.4 L337.1,302.4 L339.8,302.4 L342.5,302.4 L345.3,302.4 L348.0,302.4 L350.8,302.4 L353.5,302.4 L356.2,302.4 L359.0,302.4 L361.7,302.4 L364.4,301.9 L367.2,302.4 L369.9,302.4 L372.6,302.4 L375.4,302.4 L378.1,302.4 L380.8,302.4 L383.6,302.4 L386.3,302.4 L389.1,302.4 L391.8,302.4 L394.5,302.4 L397.3,301.9 L400.0,302.4 L402.7,302.4 L405.5,301.9 L408.2,302.4 L410.9,301.9 L413.7,301.9 L416.4,302.4 L419.2,301.9 L421.9,301.9 L424.6,302.4 L427.4,301.9 L430.1,302.4 L432.8,301.9 L435.6,302.4 L438.3,302.4 L441.0,301.9 L443.8,302.4 L446.5,301.9 L449.2,302.4 L452.0,302.4 L454.7,301.9 L457.5,302.4 L460.2,302.4 L462.9,301.9 L465.7,301.9 L468.4,302.4 L471.1,301.9 L473.9,278.0 L476.6,278.0 L479.3,278.0 L482.1,278.0 L484.8,278.0 L487.6,278.0 L490.3,278.0 L493.0,278.0 L495.8,278.0 L498.5,278.0 L501.2,278.0 L504.0,279.7 L506.7,282.2 L509.4,283.9 L512.2,285.1 L514.9,286.0 L517.6,286.8 L520.4,287.2 L523.1,287.7 L525.9,287.7 L528.6,288.1 L531.3,288.1 L534.1,288.1 L536.8,288.1 L539.5,288.5 L542.3,288.1 L545.0,288.1 L547.7,288.1 L550.5,288.5 L553.2,288.5 L556.0,288.5 L558.7,288.1 L561.4,288.5 L564.2,288.1 L566.9,288.1 L569.6,288.5 L572.4,288.1 L575.1,288.1 L577.8,288.1 L580.6,288.1 L583.3,288.1 L586.0,288.1 L588.8,288.1 L591.5,288.1 L594.3,288.1 L597.0,288.1 L599.7,288.5 L602.5,288.1 L605.2,288.1 L607.9,288.1 L610.7,288.1 L613.4,288.1 L616.1,288.1 L618.9,287.7 L621.6,362.0 L624.4,362.0 L627.1,362.0 L629.8,362.0 L632.6,362.0 L635.3,362.0 L638.0,362.0 L640.8,362.0 L643.5,362.0 L646.2,362.0 L649.0,362.0 L651.7,362.0 L654.4,362.0 L657.2,362.0 L659.9,362.0 L662.7,362.0 L665.4,362.0 L668.1,362.0 L670.9,362.0 L673.6,362.0 L676.3,362.0 L679.1,362.0 L681.8,362.0 L684.5,362.0 L687.3,362.0 L690.0,362.0 L692.8,362.0 L695.5,362.0 L698.2,362.0 L701.0,362.0 L703.7,362.0 L706.4,362.0 L709.2,362.0 L711.9,362.0 L714.6,362.0 L717.4,362.0 L720.1,362.0 L722.8,362.0 L725.6,362.0 L728.3,362.0 L731.1,362.0 L733.8,362.0 L736.5,362.0 L739.3,362.0 L742.0,362.0"/>
+              <line class="ref" x1="263.2" y1="113.4" x2="263.2" y2="166.3"/>
+              <text class="anno" x="269.2" y="148.6">0.3 Nm load lands</text>
+              <text class="anno anno-muted" x="269.2" y="161.9">dip to 1415 rpm, duty 51 → 71 %</text>
+              <line class="ref" x1="620.2" y1="74" x2="620.2" y2="362"/>
+              <text class="anno" x="614.2" y="166.3" text-anchor="end">4.11 s: FAULT,</text>
+              <text class="anno anno-muted" x="614.2" y="179.5" text-anchor="end">drive cut 110 ms after</text>
+              <text class="anno anno-muted" x="614.2" y="192.7" text-anchor="end">the last speed frame</text>
+              <circle class="mark mark-speed" cx="701.0" cy="228.0" r="4"/>
+              <text class="anno anno-muted" x="701.0" y="244" text-anchor="middle">stops, 4.70 s</text>
+            </svg>
+          </div>
+          <p class="caption">Produced by <code>otk-flywheel examples/flywheel/step.csv --trace flywheel.csv</code>. The plant is a first-order sketch and the messages are made up: it is an example, not an application. The determinism and paced runs are tests in open-tick's CI.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" aria-labelledby="how-h">
+      <div class="wrap">
+        <div class="kicker">// how it works</div>
+        <h2 id="how-h">Applications bring the machine. open-tick brings the beat.</h2>
+        <p class="intro">An application registers its signals and trace columns and steps its plants; open-tick plays the scenario, keeps the time and carries the frames. The device under test never knows which side of a bridge it is on.</p>
+        <div class="code">
+          <div class="code-bar"><span>the same loop for every driver</span></div>
+<pre><span class="k">OtkDriver</span> d;
+otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <span class="c">// free-run in CI, paced for SIL</span>
+<span class="k">while</span> (!otk_player_done(&amp;player, now)) {
+    otk_player_advance(&amp;player, now);            <span class="c">// scenario events due at this step</span>
+    machine_step(&amp;m, &amp;to_dut);                   <span class="c">// your physics; frames out</span>
+    dut_step(&amp;dut, &amp;to_machine);                 <span class="c">// in memory, or across a bridge</span>
+    otk_driver_wait(&amp;d);                         <span class="c">// returns at once, or sleeps</span>
+}</pre>
+        </div>
+        <div class="transports">
+          <div class="card">
+            <h3>Message transports <span class="chip now">CAN today</span></h3>
+            <p>The device under test sends when it wants and the machine answers in its next step. Tolerances in milliseconds, so the host can carry them: no special hardware.</p>
+            <ul>
+              <li>CAN and CAN FD, in memory or on SocketCAN (v0.1)</li>
+              <li>UART for simple machines, from open-robots (v0.2)</li>
+              <li>open-tick carries the bytes; the application decides what they mean</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Signal-level transports <span class="chip">planned</span></h3>
+            <p>Edges, levels and registers, answered within a bit time. They live in the bridge, which the core feeds once per step.</p>
+            <ul>
+              <li>rotary patterns: encoders and 60−2 crank wheels are one primitive</li>
+              <li>pulse capture: PWM duty, direction, injector timing</li>
+              <li>I²C and SPI slaves answered from a register map</li>
+            </ul>
+          </div>
+        </div>
+        <div class="contract">
+          <div>
+            <h3>The fidelity contract <span class="chip">planned · v0.3</span></h3>
+            <p>"The microcontroller cannot tell the difference" is true only within limits. Each machine will declare what it needs from a bridge, and each bridge what it guarantees. A run that cannot be faithful is refused, naming the signal and the number that fails, instead of passing against a degraded reality.</p>
+            <p>During runs on real silicon, the measured jitter and latency go into the trace, so the claim is checked rather than assumed.</p>
+          </div>
+          <div class="code">
+            <div class="code-bar"><span>illustrative only: the format is not designed yet</span></div>
+<pre><span class="c"># open-robots: one wheel</span>
+<span class="k">signals</span>:
+  - <span class="k">name</span>: <span class="v">wheel_fl.encoder</span>
+    <span class="k">kind</span>: <span class="v">quadrature_out</span>
+    <span class="k">max_edge_rate_hz</span>: <span class="v">12000</span>
+    <span class="k">level</span>: <span class="v">3v3</span>
+  - <span class="k">name</span>: <span class="v">wheel_fl.pwm</span>
+    <span class="k">kind</span>: <span class="v">pwm_capture</span>
+    <span class="k">latency_budget_us</span>: <span class="v">1000</span></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="proven-h">
+      <div class="wrap">
+        <div class="kicker">// proven on open-crank</div>
+        <h2 id="proven-h">Extracted only when nothing moved.</h2>
+        <p class="intro">open-tick's first release was accepted by its first user, not by its author: open-crank switched to it in <a href="https://github.com/Open-Heavy-Machinery/open-crank/pull/1">open-crank#1</a>, and its CI had to agree.</p>
+        <div class="stats">
+          <div class="stat"><div class="value">6 / 6</div><div class="label">scenarios with byte-identical traces against <code>main</code></div></div>
+          <div class="stat"><div class="value">18 / 18</div><div class="label">open-crank's mutations still caught</div></div>
+          <div class="stat"><div class="value">0 B</div><div class="label">change to the firmware zone: <code>portable/</code> never sees open-tick</div></div>
+          <div class="stat"><div class="value">± 1 %</div><div class="label">1500 rpm held with controller and engine as two processes on <code>vcan</code></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="start" aria-labelledby="start-h">
+      <div class="wrap start">
+        <div>
+          <div class="kicker">// run it</div>
+          <h2 id="start-h">From clone to a flywheel in a minute.</h2>
+          <p>Any host with a C11 compiler and CMake builds the core; the drivers and the SocketCAN bridge need Linux.</p>
+          <ul class="checklist">
+            <li>Run the tests, including the determinism check.</li>
+            <li>Run the flywheel free, or paced by the wall clock.</li>
+            <li>Use it from your own application with <code>add_subdirectory</code> or a submodule, as open-crank does.</li>
+          </ul>
+        </div>
+        <div class="code">
+          <div class="code-bar"><span>shell</span><button class="copy" type="button" data-copy="quickstart">copy</button></div>
+<pre id="quickstart"><span class="p">$ </span>git clone https://github.com/Open-Heavy-Machinery/open-tick.git
+<span class="p">$ </span>cd open-tick
+<span class="p">$ </span>cmake -S . -B build &amp;&amp; cmake --build build
+<span class="p">$ </span>ctest --test-dir build --output-on-failure
+<span class="c"># the same run, free or in wall-clock time</span>
+<span class="p">$ </span>./build/otk-flywheel examples/flywheel/step.csv
+<span class="p">$ </span>./build/otk-flywheel examples/flywheel/step.csv --driver paced</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap" aria-labelledby="roadmap-h">
+      <div class="wrap">
+        <div class="kicker">// direction</div>
+        <h2 id="roadmap-h">From a bus to the pins, one finishable step at a time.</h2>
+        <p class="intro">No dates. Each milestone is driven by a machine that needs it, and the full plan with exit criteria is in <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/ROADMAP.md">ROADMAP.md</a>.</p>
+        <ol class="timeline">
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.1</span><span class="tl-title">Extraction: open-crank runs on open-tick</span><span class="chip now">done</span></div>
+            <p>Timebase, scenarios and player, CAN queues, trace writer, pacer, drivers and the SocketCAN bridge, with open-crank consuming them as a git submodule.</p>
+            <ul class="pending">
+              <li class="done">open-crank's tests and 18 mutations pass on open-tick</li>
+              <li class="done">all six traces byte-identical, checked in CI</li>
+              <li class="done">the <code>vcan</code> demo runs as two processes in CI</li>
+            </ul>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Second consumer: open-robots in SIL</span><span class="chip">UART</span></div>
+            <p>One DC motor with an encoder, over a UART link through the host's serial port. Exit: both applications run on the same release, and a written list of what the second machine forced to change.</p>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Raspberry Pi Pico bridge</span><span class="chip">PIO · pins</span></div>
+            <p>Quadrature outputs and PWM capture on real pins, the bridge as the clock, the host-to-bridge protocol and the first fidelity contract. Exit: a microcontroller closes a speed loop on four simulated motors from encoder edges, within a measured jitter budget.</p>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Tang Nano 20K bridge</span><span class="chip">FPGA · pins</span></div>
+            <p>Crank and cam wheels as rotary patterns, injector capture and analog outputs, behind the same protocol as the Pico. Exit: open-crank's Level 2, an engine-ECU firmware that synchronises on the crank and holds speed.</p>
+          </li>
+          <li>
+            <div class="tl-head"><span class="tl-ver">v0.5</span><span class="tl-title">Profiles</span><span class="chip">YAML → C</span></div>
+            <p>Machines described in reviewable files, compiled to C: parameters, wiring and provenance, never equations. Exit: open-crank's engine as a profile, with identical traces.</p>
+          </li>
+        </ol>
+        <div class="side-track">
+          <div class="tl-head"><span class="tl-ver">Track R</span><span class="tl-title">Renode virtual-time driver</span><span class="chip">parallel</span></div>
+          <p>Step the simulation in lockstep with an emulated microcontroller, so real firmware runs in the loop in CI without a board.</p>
+        </div>
+        <div class="side-track">
+          <div class="tl-head"><span class="tl-ver">Track S</span><span class="tl-title">Register-mapped slaves</span><span class="chip">parallel · after v0.3</span></div>
+          <p>I²C and SPI devices answered by the bridge from a register map the core updates each step. First device: an IMU for open-robots.</p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="scope-h">
+      <div class="wrap">
+        <div class="kicker">// scope</div>
+        <h2 id="scope-h">Honest about what it is.</h2>
+        <div class="scope">
+          <div class="card yes">
+            <h3>It is</h3>
+            <ul>
+              <li><strong>The runtime of a simulated machine</strong>: time, scenarios, traces and bridges.</li>
+              <li><strong>Deterministic where it can be</strong>: free-running runs are identical, byte for byte.</li>
+              <li><strong>Measured where it cannot be</strong>: paced runs report how late they woke up.</li>
+              <li><strong>A core for any machine</strong>, grown only when a second machine needs it.</li>
+            </ul>
+          </div>
+          <div class="card no">
+            <h3>It is not</h3>
+            <ul>
+              <li><strong>A physics engine</strong> or a modelling language. Physics lives in applications.</li>
+              <li><strong>On the device under test.</strong> Your firmware never links open-tick.</li>
+              <li><strong>An MCU emulator</strong>, or a protocol stack for your firmware.</li>
+              <li><strong>Power HIL, or certified.</strong> Logic-level signals only, never real machinery.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>Open Heavy Machinery · open-tick · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/LICENSE">Apache-2.0</a></span>
+      <span><a href="https://github.com/Open-Heavy-Machinery">github.com/Open-Heavy-Machinery</a></span>
+      <p class="disclaimer">Tools for practice, development and regression testing: not certified, and never to be connected to real machinery. Bridges carry logic-level signals only and never drive motors, actuators or anything that carries power.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var btn = document.querySelector(".copy");
+      if (!btn || !navigator.clipboard) return;
+      btn.addEventListener("click", function () {
+        var pre = document.getElementById(btn.getAttribute("data-copy"));
+        var text = pre.innerText.split("\n").filter(function (l) { return l.indexOf("#") !== 0; })
+          .map(function (l) { return l.replace(/^\$ /, ""); }).join("\n");
+        navigator.clipboard.writeText(text).then(function () {
+          btn.textContent = "copied";
+          setTimeout(function () { btn.textContent = "copy"; }, 1500);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
