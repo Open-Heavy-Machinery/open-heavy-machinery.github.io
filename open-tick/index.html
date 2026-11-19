@@ -230,7 +230,7 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
             <p>The device under test sends when it wants and the machine answers in its next step. Tolerances in milliseconds, so the host can carry them: no special hardware.</p>
             <ul>
               <li>CAN and CAN FD, in memory or on SocketCAN (v0.1)</li>
-              <li>UART for simple machines, from open-robots (v0.2)</li>
+              <li>UART for simple machines, from open-robots (when open-robots starts)</li>
               <li>open-tick carries the bytes; the application decides what they mean</li>
             </ul>
           </div>
@@ -321,29 +321,34 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
             </ul>
           </li>
           <li>
-            <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Second consumer: open-robots in SIL</span><span class="chip">UART</span></div>
-            <p>One DC motor with an encoder, over a UART link through the host's serial port. Exit: both applications run on the same release, and a written list of what the second machine forced to change.</p>
+            <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Oracle: grading by what the transports show</span><span class="chip">pass / fail</span></div>
+            <p>Grade any device under test only by what is observable on its transports, with reaction times measured from the injected event and invariants checked over the whole scenario. Pulled by open-crank v0.2.1: proven there first, in its acceptance suite over the bus, then moved here as the runtime was. Exit: open-crank's verdicts are identical before and after the move, and <code>otk-flywheel</code> is graded by it too.</p>
           </li>
           <li>
-            <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Raspberry Pi Pico bridge</span><span class="chip">PIO · pins</span></div>
-            <p>Quadrature outputs and PWM capture on real pins, the bridge as the clock, the host-to-bridge protocol and the first fidelity contract. Exit: a microcontroller closes a speed loop on four simulated motors from encoder edges, within a measured jitter budget.</p>
+            <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Transport faults</span><span class="chip">fault injection</span></div>
+            <p>Lost, corrupted and delayed frames, bus-off and jitter, for every application; domain faults stay in the application. Pulled by open-crank v0.3. Exit: open-crank's fault scenarios run on them, each fault has a mutation check, and <code>otk-flywheel</code> uses at least one.</p>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Tang Nano 20K bridge</span><span class="chip">FPGA · pins</span></div>
-            <p>Crank and cam wheels as rotary patterns, injector capture and analog outputs, behind the same protocol as the Pico. Exit: open-crank's Level 2, an engine-ECU firmware that synchronises on the crank and holds speed.</p>
+            <p>The first signal-level bridge: crank and cam wheels as rotary patterns, injector capture and analog outputs, the bridge as the clock, the host-to-bridge protocol and the first fidelity contract. Pulled by open-crank v0.4. Exit: open-crank's Level 2, an engine-ECU firmware that synchronises on the crank and holds speed, within a measured jitter and latency budget.</p>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.5</span><span class="tl-title">Profiles</span><span class="chip">YAML → C</span></div>
-            <p>Machines described in reviewable files, compiled to C: parameters, wiring and provenance, never equations. Exit: open-crank's engine as a profile, with identical traces.</p>
+            <p>Machines described in reviewable files, compiled to C: parameters, wiring and provenance, never equations. Pulled by open-crank v0.5. Exit: open-crank's two-engine machine and its engine as profiles, with identical traces.</p>
           </li>
         </ol>
         <div class="side-track">
           <div class="tl-head"><span class="tl-ver">Track R</span><span class="tl-title">Renode virtual-time driver</span><span class="chip">parallel</span></div>
-          <p>Step the simulation in lockstep with an emulated microcontroller, so real firmware runs in the loop in CI without a board.</p>
+          <p>Step the simulation in lockstep with an emulated microcontroller, so real firmware runs in the loop in CI without a board. Pulled by open-crank's Track R.</p>
         </div>
         <div class="side-track">
-          <div class="tl-head"><span class="tl-ver">Track S</span><span class="tl-title">Register-mapped slaves</span><span class="chip">parallel · after v0.3</span></div>
-          <p>I²C and SPI devices answered by the bridge from a register map the core updates each step. First device: an IMU for open-robots.</p>
+          <div class="tl-head"><span class="tl-title">When a sibling starts</span><span class="chip">later</span></div>
+          <p>These keep their scope and exit criteria, and get a version number when open-robots, or another sibling application, actually starts. Until then nothing here is built.</p>
+          <ul class="pending">
+            <li><strong>open-robots in SIL.</strong> One DC motor with an encoder, over a UART link through the host's serial port, and a written list of what the second machine forced to change.</li>
+            <li><strong>Raspberry Pi Pico bridge.</strong> Quadrature outputs and PWM capture on real pins. Exit: a microcontroller closes a speed loop on four simulated motors from encoder edges, and moving between the Pico and the Tang Nano 20K changes only configuration.</li>
+            <li><strong>Register-mapped slaves.</strong> I²C and SPI devices answered by the bridge from a register map the core updates each step. First device: an IMU for open-robots.</li>
+          </ul>
         </div>
       </div>
     </section>
