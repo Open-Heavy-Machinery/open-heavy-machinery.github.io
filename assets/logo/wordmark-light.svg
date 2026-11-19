@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 64" width="470" height="64" role="img" aria-label="Open Heavy Machinery">
+  <g transform="translate(0 6) scale(1.625)">
+    <circle cx="16" cy="16" r="11" fill="none" stroke="#bc4c00" stroke-width="3"/>
+    <line x1="16" y1="12.8" x2="16" y2="8.5" stroke="#bc4c00" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="16" cy="8.5" r="3.2" fill="#bc4c00"/>
+    <circle cx="16" cy="16" r="2.2" fill="none" stroke="#bc4c00" stroke-width="2"/>
+  </g>
+  <text x="66" y="44" fill="#1f2328" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="-0.6" textLength="398" lengthAdjust="spacing">Open Heavy Machinery</text>
+</svg>
