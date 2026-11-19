@@ -12,6 +12,7 @@ Plain HTML and CSS, served by GitHub Pages from `main`. There is no build step a
 | `open-tick/index.html` | open-tick, the core: what runs in v0.1, the flywheel example, transports and the fidelity contract, the extraction from open-crank, roadmap |
 | `open-crank/index.html` | open-crank, the heavy-duty diesel: J1939 frames, the hoist step chart, how it works, quick start, roadmap |
 | `assets/site.css` | Shared styles. The palette and type are defined once in `:root` |
+| `assets/logo/` | The logo as SVG, PNG and JPG (mark, light mark, icon, wordmarks), its inline HTML ready to paste, and the palette, on a page of its own (`assets/logo/index.html`) |
 
 Each page has its own social card (`og-card.png`, `open-tick/og-card.png`, `open-crank/og-card.png`).
 
@@ -22,6 +23,10 @@ Open `index.html` in a browser. Every link between pages is relative, so the sit
 ## Social cards
 
 `tools/og/render.sh` renders `og-card.png` and `open-tick/og-card.png` from the HTML templates in `tools/og/`, with headless Chrome. `open-crank/og-card.png` predates the templates and is kept as it is.
+
+## Logo files
+
+The SVGs in `assets/logo/` are the source. `tools/logo/render.sh` renders the PNG and JPG versions from them, with headless Chrome (transparent background) and Pillow.
 
 ## Keeping it true
 
