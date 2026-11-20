@@ -122,7 +122,7 @@
               <li>one nanosecond timebase; free-run and paced drivers</li>
               <li>scenarios as data, traces that refuse to shift a column</li>
               <li>CAN and CAN FD: in memory, or on SocketCAN</li>
-              <li>next: encoders and crank wheels on real pins</li>
+              <li>next: transport faults, then crank wheels on a Tang Nano 20K's pins</li>
             </ul>
             <div class="links"><a class="main" href="open-tick/">open-tick</a><a href="https://github.com/Open-Heavy-Machinery/open-tick">GitHub</a></div>
           </article>
@@ -221,8 +221,8 @@
               <p>Your firmware talks to the machine over CAN, exactly as a crane or vessel controller talks to its engine. <code>vcan</code> on a laptop, or a USB-CAN adapter and a real board.</p>
             </div>
             <div class="level">
-              <h3>On the pins <span class="chip">next</span></h3>
-              <p>The bridge turns the plant's state into edges your timers and interrupts count: encoders on a Pico, crank and cam wheels on a Tang Nano 20K. The plant stays on a CPU; the bridge keeps the timing.</p>
+              <h3>On the pins <span class="chip">planned</span></h3>
+              <p>The bridge turns the plant's state into edges your timers and interrupts count: crank and cam wheels on a Tang Nano 20K first, encoders on a Pico when open-robots starts. The plant stays on a CPU; the bridge keeps the timing.</p>
             </div>
             <div class="level">
               <h3>How faithful it is <span class="chip">planned</span></h3>
@@ -241,7 +241,7 @@
         <div class="stats">
           <div class="stat"><div class="value">6 / 6</div><div class="label">open-crank scenarios with byte-identical traces after open-tick's extraction (<a href="https://github.com/Open-Heavy-Machinery/open-crank/pull/1">#1</a>)</div></div>
           <div class="stat"><div class="value">18 + 18</div><div class="label">deliberate mutations, in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/tools/mutation_check.sh">open-crank</a> and <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/tools/mutation_check.sh">open-tick</a>, each caught by the tests</div></div>
-          <div class="stat"><div class="value">2,574 B</div><div class="label">reference controller and J1939 codec, built for a Cortex-M4F with no <code>double</code> and nothing from libc</div></div>
+          <div class="stat"><div class="value">2,594 B</div><div class="label">reference controller and J1939 codec, built for a Cortex-M4F with no <code>double</code> and nothing from libc</div></div>
           <div class="stat"><div class="value">CAN FD</div><div class="label">64-byte frames round-tripped through open-tick's SocketCAN bridge on <code>vcan</code> in CI</div></div>
         </div>
       </div>
@@ -269,7 +269,7 @@
             <h3>open-crank <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/ROADMAP.md">ROADMAP.md</a></h3>
             <ol class="timeline compact">
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.1</span><span class="tl-title">Level 1 vertical slice</span><span class="chip now">done</span></div><p>Plant, engine ECU, J1939, portable controller and closed-loop tests; now on open-tick.</p></li>
-              <li><div class="tl-head"><span class="tl-ver">v0.1.x</span><span class="tl-title">MISRA-oriented checks, stack usage</span></div><p>cppcheck's MISRA addon and <code>-fstack-usage</code> in CI. Practice, not compliance.</p></li>
+              <li class="done"><div class="tl-head"><span class="tl-ver">v0.1.x</span><span class="tl-title">MISRA-oriented checks, stack usage</span><span class="chip now">done</span></div><p>cppcheck's MISRA addon and <code>-fstack-usage</code> in CI. Practice, not compliance.</p></li>
               <li><div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Reference board on the bus</span></div><p>An STM32G431 and a USB-CAN adapter run the portable controller unchanged.</p></li>
               <li><div class="tl-head"><span class="tl-ver">v0.2.1–v0.3</span><span class="tl-title">Acceptance suite, robustness</span></div><p>Grade any controller by its frames; fault injection, DM1 and a watchdog on the board.</p></li>
               <li><div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Level 2: your firmware as the engine ECU</span></div><p>Crank and cam signals from open-tick's Tang Nano 20K bridge; fuel from your injector pulses.</p></li>
