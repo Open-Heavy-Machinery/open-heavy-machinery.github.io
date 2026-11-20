@@ -349,8 +349,8 @@
               <li class="done">runs on <a href="../open-tick/">open-tick</a>, with all six traces byte-identical (<a href="https://github.com/Open-Heavy-Machinery/open-crank/pull/1">#1</a>)</li>
             </ul>
           </li>
-          <li>
-            <div class="tl-head"><span class="tl-ver">v0.1.x</span><span class="tl-title">MISRA-oriented checks and stack usage in CI</span><span class="chip">cppcheck · -fstack-usage</span></div>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.1.x</span><span class="tl-title">MISRA-oriented checks and stack usage in CI</span><span class="chip now">done</span></div>
             <p>The free cppcheck MISRA addon over <code>portable/</code>, findings by rule number only, each one fixed or documented as a deviation; and the stack usage of every function in the Cortex-M4F build. MISRA-oriented, because the addon covers only part of the rules: passing it does not imply compliance.</p>
           </li>
           <li>
@@ -420,7 +420,7 @@
               <li><strong>A way to arrive at the bench</strong> with working code and a shorter list of things to try.</li>
               <li><strong>Open and auditable</strong>: Apache-2.0, original protocol code, cited parameters.</li>
               <li><strong>Bring your own firmware</strong>: any board, RTOS or language that speaks CAN.</li>
-              <li><strong>A place to practise critical-firmware techniques</strong> (not a certified tool): acceptance tests over the bus, MISRA-oriented, stack and timing checks, planned from v0.1.x.</li>
+              <li><strong>A place to practise critical-firmware techniques</strong> (not a certified tool): acceptance tests over the bus, MISRA-oriented, stack and timing checks, in CI since v0.1.x.</li>
             </ul>
           </div>
           <div class="card no">
