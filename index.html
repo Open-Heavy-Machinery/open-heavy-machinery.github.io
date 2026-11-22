@@ -78,7 +78,8 @@
           <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>github.com/Open-Heavy-Machinery</span></div>
           <ul class="board">
             <li><a class="name" href="open-tick/">open-tick</a><span class="ver">v0.1</span><span class="state">● done</span><span class="what">One clock, scenarios as data, traces and CAN / CAN FD bridges. The core every project runs on.</span></li>
-            <li><a class="name" href="open-crank/">open-crank</a><span class="ver">v0.1</span><span class="state">● done</span><span class="what">A heavy-duty diesel that answers back over J1939: plant, engine ECU, hydraulic load. Runs on open-tick.</span></li>
+            <li><a class="name" href="open-crank/">open-crank</a><span class="ver">v0.2</span><span class="state">● done</span><span class="what">A heavy-duty diesel that answers back over J1939: plant, engine ECU, hydraulic load. Runs on open-tick.</span></li>
+            <li><a class="name" href="https://github.com/Open-Heavy-Machinery/open-rig">open-rig</a><span class="ver">v0.1</span><span class="state">● done</span><span class="what">A static browser viewer for open-tick traces: one trace, or two on the same time axis. open-crank ships a layout for it.</span></li>
             <li><span class="name">open-robots</span><span class="ver">—</span><span class="state planned">○ future, after open-crank</span><span class="what">DC motors, encoders and IMUs for robot firmware, on open-tick, with no J1939.</span></li>
           </ul>
           <figcaption class="term-foot" id="board-caption">When open-tick was extracted from open-crank, all six of open-crank's scenarios kept byte-identical traces, checked in CI on <a href="https://github.com/Open-Heavy-Machinery/open-crank/pull/1">open-crank#1</a>.</figcaption>
@@ -127,14 +128,14 @@
             <div class="links"><a class="main" href="open-tick/">open-tick</a><a href="https://github.com/Open-Heavy-Machinery/open-tick">GitHub</a></div>
           </article>
           <article class="project">
-            <div class="top"><span class="pname">open-crank</span><span class="chip now">v0.1 done</span></div>
+            <div class="top"><span class="pname">open-crank</span><span class="chip now">v0.2 done</span></div>
             <h3>A heavy-duty diesel that answers back.</h3>
             <p>Connect your own firmware over J1939 and practise against an engine you could never keep at home.</p>
             <ul>
               <li>D936L A6-class plant with turbo lag and a hydraulic hoist</li>
               <li>a simulated engine ECU with governor, limits and trips</li>
-              <li>a reference controller that builds for a Cortex-M4F</li>
-              <li>next: an STM32G431 board on a real CAN bus</li>
+              <li>a reference controller that runs on an STM32G431 board over a real CAN bus</li>
+              <li>next: an acceptance suite that grades any controller by its frames</li>
             </ul>
             <div class="links"><a class="main" href="open-crank/">open-crank</a><a href="https://github.com/Open-Heavy-Machinery/open-crank">GitHub</a></div>
           </article>
