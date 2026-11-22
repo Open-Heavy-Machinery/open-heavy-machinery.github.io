@@ -57,10 +57,10 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.1<span class="long"> · Level 1 vertical slice</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.2<span class="long"> · reference board on the bus</span></div>
           <h1>A heavy-duty diesel that <em>answers back.</em></h1>
           <p class="lede">
-            Connect your own firmware over <strong>J1939</strong> and practise against an engine you could never keep at home. <strong>open-crank</strong> simulates the engine, its ECU and its hydraulic load: develop, test and break your controller on a laptop and in CI today, and on a real board next. No engine required.
+            Connect your own firmware over <strong>J1939</strong> and practise against an engine you could never keep at home. <strong>open-crank</strong> simulates the engine, its ECU and its hydraulic load: develop, test and break your controller on a laptop, in CI and on a cheap STM32G431 board today. No engine required.
           </p>
           <div class="cta">
             <a class="btn primary" href="https://github.com/Open-Heavy-Machinery/open-crank">
@@ -233,7 +233,7 @@
       <div class="wrap">
         <div class="kicker">// how it works</div>
         <h2 id="how-h">Your controller sees a bus. Behind it, a whole machine.</h2>
-        <p class="intro">In Level 1 the device under test only touches CAN, exactly like a crane or vessel controller does. That is what lets the same firmware run against a laptop today and a real board tomorrow.</p>
+        <p class="intro">In Level 1 the device under test only touches CAN, exactly like a crane or vessel controller does. That is what lets the same firmware run against a laptop and against a real board.</p>
         <div class="arch">
           <figure class="diagram">
             <svg viewBox="0 0 640 330" role="img" aria-labelledby="dia-title dia-desc">
@@ -302,7 +302,7 @@
         <div class="zones">
           <div class="zone"><h3>portable/</h3><p>The controller and the J1939 codec. Depends on <code>stdint.h</code>, <code>stdbool.h</code>, <code>stddef.h</code> and nothing else. Goes to firmware.</p></div>
           <div class="zone"><h3>sim/</h3><p>Plant physics, the engine ECU, loads, the bench, scenarios. Host only, double precision, never reads a clock.</p></div>
-          <div class="zone"><h3>platforms/</h3><p>Thin glue per target: headless host, Linux SocketCAN today; STM32G4 next, then FPGA; Renode in parallel.</p></div>
+          <div class="zone"><h3>platforms/</h3><p>Thin glue per target: headless host, Linux SocketCAN and the STM32G4 reference board today; then FPGA; Renode in parallel.</p></div>
           <div class="zone"><h3>external/open-tick</h3><p><a href="../open-tick/">open-tick</a>, pinned as a git submodule: the clock, scenarios, traces, the pacer and the SocketCAN bridge. open-crank brings the engine.</p></div>
         </div>
         <p class="zone-rule">Dependencies point one way, and CI enforces it: if <code>portable/</code> ever picks up a <code>printf</code>, a socket, a software-emulated <code>double</code> or anything from open-tick, the build fails.</p>
@@ -353,9 +353,15 @@
             <div class="tl-head"><span class="tl-ver">v0.1.x</span><span class="tl-title">MISRA-oriented checks and stack usage in CI</span><span class="chip now">done</span></div>
             <p>The free cppcheck MISRA addon over <code>portable/</code>, findings by rule number only, each one fixed or documented as a deviation; and the stack usage of every function in the Cortex-M4F build. MISRA-oriented, because the addon covers only part of the rules: passing it does not imply compliance.</p>
           </li>
-          <li>
-            <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Reference board on the bus</span><span class="chip">STM32G431 + USB-CAN</span></div>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Reference board on the bus</span><span class="chip now">done</span></div>
             <p>A cheap reference board, an STM32G431 with a CAN transceiver and a SocketCAN USB-CAN adapter, with a bill of materials and a bring-up guide from scratch, running the portable controller unchanged. Latency measured first, tolerances written down before comparing, then the hoist scenario against the wall-clock SIL; the worst observed execution time (measured with the DWT cycle counter; not a proven bound) and stack of the controller step on the board. Real silicon, never real machinery.</p>
+            <ul class="pending">
+              <li class="done">hoist scenario with the board in the loop within tolerances written beforehand, three runs, checked with <code>tools/compare_runs.py</code> (<a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/board-vs-sil.md">results</a>)</li>
+              <li class="done">bring-up guide followed from scratch on a clean clone (<a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/platforms/stm32g4/BRINGUP.md">BRINGUP.md</a>)</li>
+              <li class="done">controller step: worst observed 13.5 µs on the board; worst-case stack 68 bytes, checked in CI</li>
+              <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.2">v0.2</a>, with the traces attached</li>
+            </ul>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.2.1</span><span class="tl-title">Acceptance suite over the bus</span><span class="chip">any controller</span></div>
