@@ -57,7 +57,7 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.2<span class="long"> · reference board on the bus</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.2.1<span class="long"> · acceptance suite over the bus</span></div>
           <h1>A heavy-duty diesel that <em>answers back.</em></h1>
           <p class="lede">
             Connect your own firmware over <strong>J1939</strong> and practise against an engine you could never keep at home. <strong>open-crank</strong> simulates the engine, its ECU and its hydraulic load: develop, test and break your controller on a laptop, in CI and on a cheap STM32G431 board today. No engine required.
@@ -364,8 +364,13 @@
             </ul>
           </li>
           <li>
-            <div class="tl-head"><span class="tl-ver">v0.2.1</span><span class="tl-title">Acceptance suite over the bus</span><span class="chip">any controller</span></div>
+            <div class="tl-head"><span class="tl-ver">v0.2.1</span><span class="tl-title">Acceptance suite over the bus</span><span class="chip now">done</span></div>
             <p>A runner that grades any device under test by its CAN frames alone, with a pass/fail report per scenario. Criteria use only what is observable on the bus, timed from the injected event: within T ms of losing EEC1, TSC1 is sent with override disabled and <code>OC_PUMP_CMD</code> displacement is 0; no TSC1 ever requests more than high idle. The reference controller must pass; a deliberately broken one must fail.</p>
+            <ul class="pending">
+              <li class="done">seven scenarios with criteria written only in bus terms; the reference controller passes all of them on <code>vcan</code> in CI and on the reference board (<a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/acceptance.md#results">results</a>)</li>
+              <li class="done">six deliberately broken controllers fail by the expected criteria, in CI; one accepted survivor, with its reason (<a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/acceptance.md#deliberately-broken-controllers">list</a>)</li>
+              <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.2.1">v0.2.1</a>, with the board's reports and traces attached</li>
+            </ul>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Robustness on the board</span><span class="chip">fault injection</span></div>
@@ -426,7 +431,7 @@
               <li><strong>A way to arrive at the bench</strong> with working code and a shorter list of things to try.</li>
               <li><strong>Open and auditable</strong>: Apache-2.0, original protocol code, cited parameters.</li>
               <li><strong>Bring your own firmware</strong>: any board, RTOS or language that speaks CAN.</li>
-              <li><strong>A place to practise critical-firmware techniques</strong> (not a certified tool): MISRA-oriented and stack checks in CI since v0.1.x, and the worst observed execution time on the board since v0.2; acceptance tests over the bus are planned for v0.2.1.</li>
+              <li><strong>A place to practise critical-firmware techniques</strong> (not a certified tool): MISRA-oriented and stack checks in CI since v0.1.x, and the worst observed execution time on the board since v0.2; acceptance tests over the bus, in CI and on the board, since v0.2.1.</li>
             </ul>
           </div>
           <div class="card no">
@@ -450,7 +455,7 @@
         <div class="contribute">
           <div class="card"><h3>Source a parameter</h3><p>Bench access to either reference engine class? Correct a number in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/parameters.md">parameters.md</a> and cite where it comes from.</p></div>
           <div class="card"><h3>Check a layout</h3><p>Own a copy of SAE J1939-71? Compare it with the <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/bus-interface.md">bus interface</a> and report any byte that disagrees.</p></div>
-          <div class="card"><h3>Bring a controller</h3><p>Point your own machine controller at the simulated engine through the <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/bus-interface.md">bus contract</a>, and <a href="https://github.com/Open-Heavy-Machinery/open-crank/issues">open an issue</a> with what broke, in either one. An acceptance suite that grades any controller by its frames is planned for v0.2.1.</p></div>
+          <div class="card"><h3>Bring a controller</h3><p>Point your own machine controller at the simulated engine through the <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/bus-interface.md">bus contract</a>, and <a href="https://github.com/Open-Heavy-Machinery/open-crank/issues">open an issue</a> with what broke, in either one. Then grade it with the <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/acceptance.md">acceptance suite</a>: <code>open-crank-accept</code> plays each scenario and passes or fails your controller by the frames it sends.</p></div>
         </div>
       </div>
     </section>
