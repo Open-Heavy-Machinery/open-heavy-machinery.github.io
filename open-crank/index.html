@@ -363,7 +363,7 @@
               <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.2">v0.2</a>, with the traces attached</li>
             </ul>
           </li>
-          <li>
+          <li class="done">
             <div class="tl-head"><span class="tl-ver">v0.2.1</span><span class="tl-title">Acceptance suite over the bus</span><span class="chip now">done</span></div>
             <p>A runner that grades any device under test by its CAN frames alone, with a pass/fail report per scenario. Criteria use only what is observable on the bus, timed from the injected event: within T ms of losing EEC1, TSC1 is sent with override disabled and <code>OC_PUMP_CMD</code> displacement is 0; no TSC1 ever requests more than high idle. The reference controller must pass; a deliberately broken one must fail.</p>
             <ul class="pending">
