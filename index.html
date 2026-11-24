@@ -78,7 +78,7 @@
           <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>github.com/Open-Heavy-Machinery</span></div>
           <ul class="board">
             <li><a class="name" href="open-tick/">open-tick</a><span class="ver">v0.2</span><span class="state">● done</span><span class="what">One clock, scenarios as data, traces, CAN / CAN FD bridges and an oracle that grades by frames. The core every project runs on.</span></li>
-            <li><a class="name" href="open-crank/">open-crank</a><span class="ver">v0.2.1</span><span class="state">● done</span><span class="what">A heavy-duty diesel that answers back over J1939: plant, engine ECU, hydraulic load. Runs on open-tick.</span></li>
+            <li><a class="name" href="open-crank/">open-crank</a><span class="ver">v0.2.2</span><span class="state">● done</span><span class="what">A heavy-duty diesel that answers back over J1939: plant, engine ECU, hydraulic load. Runs on open-tick.</span></li>
             <li><a class="name" href="https://github.com/Open-Heavy-Machinery/open-rig">open-rig</a><span class="ver">v0.1</span><span class="state">● done</span><span class="what">A static browser viewer for open-tick traces: one trace, or two on the same time axis. open-crank ships a layout for it.</span></li>
             <li><span class="name">open-robots</span><span class="ver">—</span><span class="state planned">○ future, after open-crank</span><span class="what">DC motors, encoders and IMUs for robot firmware, on open-tick, with no J1939.</span></li>
           </ul>
@@ -129,13 +129,14 @@
             <div class="links"><a class="main" href="open-tick/">open-tick</a><a href="https://github.com/Open-Heavy-Machinery/open-tick">GitHub</a></div>
           </article>
           <article class="project">
-            <div class="top"><span class="pname">open-crank</span><span class="chip now">v0.2.1 done</span></div>
+            <div class="top"><span class="pname">open-crank</span><span class="chip now">v0.2.2 done</span></div>
             <h3>A heavy-duty diesel that answers back.</h3>
             <p>Connect your own firmware over J1939 and practise against an engine you could never keep at home.</p>
             <ul>
               <li>D936L A6-class plant with turbo lag and a hydraulic hoist</li>
               <li>a simulated engine ECU with governor, limits and trips</li>
               <li>a reference controller that runs on an STM32G431 board over a real CAN bus</li>
+              <li>your bench checked with one command: build, program and test the board, no CubeIDE</li>
               <li>next: robustness on the board: fault injection, DM1 and a watchdog</li>
             </ul>
             <div class="links"><a class="main" href="open-crank/">open-crank</a><a href="https://github.com/Open-Heavy-Machinery/open-crank">GitHub</a></div>
@@ -242,7 +243,7 @@
         <p class="intro">Pre-alpha does not mean unchecked. These are results from the projects' own CI, and each links to where it is checked.</p>
         <div class="stats">
           <div class="stat"><div class="value">6 / 6</div><div class="label">open-crank scenarios with byte-identical traces after open-tick's extraction (<a href="https://github.com/Open-Heavy-Machinery/open-crank/pull/1">#1</a>)</div></div>
-          <div class="stat"><div class="value">18 + 18</div><div class="label">deliberate mutations, in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/tools/mutation_check.sh">open-crank</a> and <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/tools/mutation_check.sh">open-tick</a>, each caught by the tests</div></div>
+          <div class="stat"><div class="value">19 + 18</div><div class="label">deliberate mutations, in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/tools/mutation_check.sh">open-crank</a> and <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/tools/mutation_check.sh">open-tick</a>, each caught by the tests</div></div>
           <div class="stat"><div class="value">2,594 B</div><div class="label">reference controller and J1939 codec, built for a Cortex-M4F with no <code>double</code> and nothing from libc</div></div>
           <div class="stat"><div class="value">CAN FD</div><div class="label">64-byte frames round-tripped through open-tick's SocketCAN bridge on <code>vcan</code> in CI</div></div>
         </div>
@@ -274,6 +275,7 @@
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.1.x</span><span class="tl-title">MISRA-oriented checks, stack usage</span><span class="chip now">done</span></div><p>cppcheck's MISRA addon and <code>-fstack-usage</code> in CI. Practice, not compliance.</p></li>
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Reference board on the bus</span><span class="chip now">done</span></div><p>An STM32G431 and a USB-CAN adapter run the portable controller unchanged.</p></li>
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.2.1</span><span class="tl-title">Acceptance suite over the bus</span><span class="chip now">done</span></div><p>Any controller graded by the CAN frames it sends; deliberately broken controllers must fail it.</p></li>
+              <li class="done"><div class="tl-head"><span class="tl-ver">v0.2.2</span><span class="tl-title">Board automation</span><span class="chip now">done</span></div><p>The board built, programmed and tested from the PC with one command, without CubeIDE: a standard bench check anyone can run.</p></li>
               <li><div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Robustness on the board</span></div><p>Fault injection, DM1 and a watchdog on the board.</p></li>
               <li><div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Level 2: your firmware as the engine ECU</span></div><p>Crank and cam signals from open-tick's Tang Nano 20K bridge; fuel from your injector pulses.</p></li>
               <li><div class="tl-head"><span class="tl-ver">v0.5–v0.7</span><span class="tl-title">Two engines, a marine two-stroke, power management</span></div><p>Address claiming, a propeller load and a generator-set bus with a blackout scenario.</p></li>

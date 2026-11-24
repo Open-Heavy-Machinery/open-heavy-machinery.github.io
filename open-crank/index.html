@@ -57,7 +57,7 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.2.1<span class="long"> · acceptance suite over the bus</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.2.2<span class="long"> · board automation</span></div>
           <h1>A heavy-duty diesel that <em>answers back.</em></h1>
           <p class="lede">
             Connect your own firmware over <strong>J1939</strong> and practise against an engine you could never keep at home. <strong>open-crank</strong> simulates the engine, its ECU and its hydraulic load: develop, test and break your controller on a laptop, in CI and on a cheap STM32G431 board today. No engine required.
@@ -333,6 +333,31 @@
       </div>
     </section>
 
+    <section id="board" aria-labelledby="board-h">
+      <div class="wrap start">
+        <div>
+          <div class="kicker">// on a real board</div>
+          <h2 id="board-h">Your bench, checked with one command.</h2>
+          <p>In the clone above, with a NUCLEO-G431KB, an MCP2562FD transceiver and a CANable-class USB-CAN adapter <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/platforms/stm32g4/README.md#hardware">wired as in the board's README</a>, on a Debian or Ubuntu PC. No STM32CubeIDE, no button to press.</p>
+          <ul class="checklist">
+            <li>The firmware is built from the repository and programmed through the Nucleo's own ST-LINK.</li>
+            <li>The bus round trip is measured, which checks the wiring, the termination and the bit rate.</li>
+            <li>All seven scenarios run on the board, with a reset before each one, and you can watch them pass.</li>
+            <li>A report compares your bench with the reference one: <strong>BENCH OK</strong>, or what differs.</li>
+          </ul>
+        </div>
+        <div class="code">
+          <div class="code-bar"><span>shell</span><button class="copy" type="button" data-copy="bench">copy</button></div>
+<pre id="bench"><span class="c"># checks the PC and installs what is missing (it asks first)</span>
+<span class="p">$ </span>tools/board/setup.sh
+<span class="p">$ </span>sudo slcand -o -c -s5 /dev/serial/by-id/&lt;your-adapter&gt; can0
+<span class="p">$ </span>sudo ip link set can0 up
+<span class="c"># about 2.5 minutes, then report.md</span>
+<span class="p">$ </span>tools/board/bench.sh</pre>
+        </div>
+      </div>
+    </section>
+
     <section id="roadmap" aria-labelledby="roadmap-h">
       <div class="wrap">
         <div class="kicker">// direction</div>
@@ -370,6 +395,15 @@
               <li class="done">seven scenarios with criteria written only in bus terms; the reference controller passes all of them on <code>vcan</code> in CI and on the reference board (<a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/acceptance.md#results">results</a>)</li>
               <li class="done">six deliberately broken controllers fail by the expected criteria, in CI; one accepted survivor, with its reason (<a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/acceptance.md#deliberately-broken-controllers">list</a>)</li>
               <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.2.1">v0.2.1</a>, with the board's reports and traces attached</li>
+            </ul>
+          </li>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.2.2</span><span class="tl-title">Board automation</span><span class="chip now">done</span></div>
+            <p>The reference board is built, programmed and tested from the PC with one command, without STM32CubeIDE and without pressing a button. CubeIDE stays as the beginners' way in.</p>
+            <ul class="pending">
+              <li class="done">the firmware builds in CI from the repository alone, with a pinned toolchain and ST's code fetched, never copied</li>
+              <li class="done"><code>tools/board/bench.sh</code>: round trip, seven scenarios with a reset before each, and a report against the reference bench: BENCH OK (<a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/platforms/stm32g4/README.md#the-bench-check">how it works</a>)</li>
+              <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.2.2">v0.2.2</a>, with the bench run attached</li>
             </ul>
           </li>
           <li>
@@ -431,7 +465,7 @@
               <li><strong>A way to arrive at the bench</strong> with working code and a shorter list of things to try.</li>
               <li><strong>Open and auditable</strong>: Apache-2.0, original protocol code, cited parameters.</li>
               <li><strong>Bring your own firmware</strong>: any board, RTOS or language that speaks CAN.</li>
-              <li><strong>A place to practise critical-firmware techniques</strong> (not a certified tool): MISRA-oriented and stack checks in CI since v0.1.x, and the worst observed execution time on the board since v0.2; acceptance tests over the bus, in CI and on the board, since v0.2.1.</li>
+              <li><strong>A place to practise critical-firmware techniques</strong> (not a certified tool): MISRA-oriented and stack checks in CI since v0.1.x, and the worst observed execution time on the board since v0.2; acceptance tests over the bus, in CI and on the board, since v0.2.1; a standard bench check on the board, one command, since v0.2.2.</li>
             </ul>
           </div>
           <div class="card no">
