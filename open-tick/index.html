@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="dark">
   <title>open-tick · the beat a simulated machine keeps · Open Heavy Machinery</title>
-  <meta name="description" content="open-tick is the machine-independent core of Open Heavy Machinery: one clock, scenarios as data, traces and CAN / CAN FD bridges in C11, so real firmware can be tested against any simulated machine. Pin-level bridges on a Raspberry Pi Pico and a Tang Nano 20K are planned.">
+  <meta name="description" content="open-tick is the machine-independent core of Open Heavy Machinery: one clock, scenarios as data, traces, CAN / CAN FD bridges and an acceptance oracle in C11, so real firmware can be tested against any simulated machine. Pin-level bridges on a Raspberry Pi Pico and a Tang Nano 20K are planned.">
   <meta name="theme-color" content="#0d1117">
   <link rel="canonical" href="https://open-heavy-machinery.github.io/open-tick/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d1117'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23f0883e' stroke-width='3'/%3E%3Ccircle cx='16' cy='9.5' r='3' fill='%23f0883e'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23f0883e'/%3E%3C/svg%3E">
@@ -14,7 +14,7 @@
   <meta property="og:site_name" content="Open Heavy Machinery">
   <meta property="og:url" content="https://open-heavy-machinery.github.io/open-tick/">
   <meta property="og:title" content="open-tick: the beat a simulated machine keeps">
-  <meta property="og:description" content="One clock, scenarios as data, traces and CAN / CAN FD bridges in C11. open-crank runs on it with byte-identical traces. Part of Open Heavy Machinery.">
+  <meta property="og:description" content="One clock, scenarios as data, traces, CAN / CAN FD bridges and an acceptance oracle in C11. open-crank runs on it with byte-identical traces. Part of Open Heavy Machinery.">
   <meta property="og:image" content="https://open-heavy-machinery.github.io/open-tick/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -57,7 +57,7 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.1<span class="long"> · extraction done</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.2<span class="long"> · oracle done</span></div>
           <h1>The beat a simulated machine <em>keeps.</em></h1>
           <p class="lede">
             <strong>open-tick</strong> is the part of a simulated machine that does not depend on the machine: one clock that never reads the wall, scenarios as data, traces, and the bridges that carry signals to your microcontroller. Applications bring the physics; <a href="../open-crank/">open-crank</a>, a heavy-duty diesel, already runs on it.
@@ -109,9 +109,9 @@ identical       speed_command_loss
 
     <section id="today" aria-labelledby="today-h">
       <div class="wrap">
-        <div class="kicker">// what runs today · v0.1</div>
+        <div class="kicker">// what runs today · v0.2</div>
         <h2 id="today-h">The runtime of a machine, without the machine.</h2>
-        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Every claim below points at the code that backs it.</p>
+        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Version 0.2 adds the oracle, moved from open-crank's acceptance suite. Every claim below points at the code that backs it.</p>
         <div class="grid">
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></div>
@@ -121,9 +121,9 @@ identical       speed_command_loss
           </article>
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg></div>
-            <h3>Scenarios are data</h3>
-            <p>Each application registers its signal names; scenarios are plain CSV played at the start of each step. A typo fails loudly with its line number instead of running a different test.</p>
-            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/scenario.h">scenario.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/player.h">player.h</a></div>
+            <h3>Scenarios and criteria are data</h3>
+            <p>Each application registers its signal names; scenarios are plain CSV played at the start of each step, and a typo fails loudly with its line number. Acceptance criteria are CSV too: the oracle grades a device under test only by the frames it sends, timed from the injected event.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/scenario.h">scenario.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/oracle.h">oracle.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/docs/criteria-format.md">criteria format</a></div>
           </article>
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12h20"/><path d="M6 12V7M10 12v5M14 12V7M18 12v5"/></svg></div>
@@ -289,6 +289,7 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
           <ul class="checklist">
             <li>Run the tests, including the determinism check.</li>
             <li>Run the flywheel free, or paced by the wall clock.</li>
+            <li>Let the oracle grade the flywheel's controller by its frames.</li>
             <li>Use it from your own application with <code>add_subdirectory</code> or a submodule, as open-crank does.</li>
           </ul>
         </div>
@@ -300,7 +301,9 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
 <span class="p">$ </span>ctest --test-dir build --output-on-failure
 <span class="c"># the same run, free or in wall-clock time</span>
 <span class="p">$ </span>./build/otk-flywheel examples/flywheel/step.csv
-<span class="p">$ </span>./build/otk-flywheel examples/flywheel/step.csv --driver paced</pre>
+<span class="p">$ </span>./build/otk-flywheel examples/flywheel/step.csv --driver paced
+<span class="c"># graded by the oracle: pass or fail</span>
+<span class="p">$ </span>./build/otk-flywheel examples/flywheel/step.csv --criteria examples/flywheel/step.accept.csv</pre>
         </div>
       </div>
     </section>
@@ -320,9 +323,13 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
               <li class="done">the <code>vcan</code> demo runs as two processes in CI</li>
             </ul>
           </li>
-          <li>
-            <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Oracle: grading by what the transports show</span><span class="chip">pass / fail</span></div>
-            <p>Grade any device under test only by what is observable on its transports, with reaction times measured from the injected event and invariants checked over the whole scenario. Pulled by open-crank v0.2.1: proven there first, in its acceptance suite over the bus, then moved here as the runtime was. Exit: open-crank's verdicts are identical before and after the move, and <code>otk-flywheel</code> is graded by it too.</p>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Oracle: grading by what the transports show</span><span class="chip now">done</span></div>
+            <p>Grade any device under test only by what is observable on its transports, with reaction times measured from the injected event and invariants checked over the whole scenario. Proven first in open-crank v0.2.1's acceptance suite over the bus, then moved here as the runtime was.</p>
+            <ul class="pending">
+              <li class="done">open-crank's seven acceptance reports identical, byte for byte, before and after the move</li>
+              <li class="done"><code>otk-flywheel</code> graded by the oracle in CI</li>
+            </ul>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Transport faults</span><span class="chip">fault injection</span></div>
@@ -361,7 +368,7 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
           <div class="card yes">
             <h3>It is</h3>
             <ul>
-              <li><strong>The runtime of a simulated machine</strong>: time, scenarios, traces and bridges.</li>
+              <li><strong>The runtime of a simulated machine</strong>: time, scenarios, traces, bridges and an oracle.</li>
               <li><strong>Deterministic where it can be</strong>: free-running runs are identical, byte for byte.</li>
               <li><strong>Measured where it cannot be</strong>: paced runs report how late they woke up.</li>
               <li><strong>A core for any machine</strong>, grown only when a second machine needs it.</li>

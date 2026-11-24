@@ -9,7 +9,7 @@ Plain HTML and CSS, served by GitHub Pages from `main`. There is no build step a
 | Path | Page |
 |---|---|
 | `index.html` | The organisation: mission, how it started, the projects, how they fit, verified results, roadmap overview, principles, how to get involved |
-| `open-tick/index.html` | open-tick, the core: what runs in v0.1, the flywheel example, transports and the fidelity contract, the extraction from open-crank, roadmap |
+| `open-tick/index.html` | open-tick, the core: what runs in v0.2 (with the oracle), the flywheel example, transports and the fidelity contract, the extraction from open-crank, roadmap |
 | `open-crank/index.html` | open-crank, the heavy-duty diesel: J1939 frames, the hoist step chart, how it works, quick start, roadmap |
 | `assets/site.css` | Shared styles. The palette and type are defined once in `:root` |
 | `assets/logo/` | The logo as SVG, PNG and JPG (mark, light mark, icon, wordmarks), its inline HTML ready to paste, and the palette, on a page of its own (`assets/logo/index.html`) |
