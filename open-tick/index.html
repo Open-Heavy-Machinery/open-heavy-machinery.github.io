@@ -57,7 +57,7 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.2<span class="long"> · oracle done</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.2.1<span class="long"> · verdict files</span></div>
           <h1>The beat a simulated machine <em>keeps.</em></h1>
           <p class="lede">
             <strong>open-tick</strong> is the part of a simulated machine that does not depend on the machine: one clock that never reads the wall, scenarios as data, traces, and the bridges that carry signals to your microcontroller. Applications bring the physics; <a href="../open-crank/">open-crank</a>, a heavy-duty diesel, already runs on it.
@@ -109,9 +109,9 @@ identical       speed_command_loss
 
     <section id="today" aria-labelledby="today-h">
       <div class="wrap">
-        <div class="kicker">// what runs today · v0.2</div>
+        <div class="kicker">// what runs today · v0.2.1</div>
         <h2 id="today-h">The runtime of a machine, without the machine.</h2>
-        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Version 0.2 adds the oracle, moved from open-crank's acceptance suite. Every claim below points at the code that backs it.</p>
+        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Version 0.2 adds the oracle, moved from open-crank's acceptance suite, and 0.2.1 its verdict files. Every claim below points at the code that backs it.</p>
         <div class="grid">
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></div>
@@ -122,8 +122,8 @@ identical       speed_command_loss
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg></div>
             <h3>Scenarios and criteria are data</h3>
-            <p>Each application registers its signal names; scenarios are plain CSV played at the start of each step, and a typo fails loudly with its line number. Acceptance criteria are CSV too: the oracle grades a device under test only by the frames it sends, timed from the injected event.</p>
-            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/scenario.h">scenario.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/oracle.h">oracle.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/docs/criteria-format.md">criteria format</a></div>
+            <p>Each application registers its signal names; scenarios are plain CSV played at the start of each step, and a typo fails loudly with its line number. Acceptance criteria are CSV too: the oracle grades a device under test only by the frames it sends, timed from the injected event, and can write its verdicts as a file that <a href="https://github.com/Open-Heavy-Machinery/open-rig">open-rig</a> draws over the trace.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/scenario.h">scenario.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/core/include/opentick/oracle.h">oracle.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/docs/criteria-format.md">criteria format</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/docs/verdict-format.md">verdict format</a></div>
           </article>
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12h20"/><path d="M6 12V7M10 12v5M14 12V7M18 12v5"/></svg></div>
@@ -146,7 +146,7 @@ identical       speed_command_loss
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div>
             <h3>Tests that can fail</h3>
-            <p>Sanitizers, gcc and clang, and 18 deliberate mutations: CI breaks each behaviour applications rely on and requires the tests to notice.</p>
+            <p>Sanitizers, gcc and clang, and 19 deliberate mutations: CI breaks each behaviour applications rely on and requires the tests to notice.</p>
             <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/tools/mutation_check.sh">tools/mutation_check.sh</a></div>
           </article>
         </div>
@@ -329,6 +329,14 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
             <ul class="pending">
               <li class="done">open-crank's seven acceptance reports identical, byte for byte, before and after the move</li>
               <li class="done"><code>otk-flywheel</code> graded by the oracle in CI</li>
+            </ul>
+          </li>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.2.1</span><span class="tl-title">Verdict files</span><span class="chip now">done</span></div>
+            <p>The oracle's verdicts in a file that programs and viewers read: for each criterion, its window, the event a reaction is timed from, where the reaction ended and where it first failed, on the trace's time axis. Pulled by open-crank v0.3, whose fault scenarios will make criteria fail on purpose.</p>
+            <ul class="pending">
+              <li class="done">the verdict file agrees with the text report, row by row, in the tests and for <code>otk-flywheel</code></li>
+              <li class="done"><a href="https://github.com/Open-Heavy-Machinery/open-rig">open-rig</a> draws the flywheel's verdicts over its trace</li>
             </ul>
           </li>
           <li>
