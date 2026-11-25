@@ -57,7 +57,7 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.2.1<span class="long"> · verdict files</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.3<span class="long"> · transport faults</span></div>
           <h1>The beat a simulated machine <em>keeps.</em></h1>
           <p class="lede">
             <strong>open-tick</strong> is the part of a simulated machine that does not depend on the machine: one clock that never reads the wall, scenarios as data, traces, and the bridges that carry signals to your microcontroller. Applications bring the physics; <a href="../open-crank/">open-crank</a>, a heavy-duty diesel, already runs on it.
@@ -109,9 +109,9 @@ identical       speed_command_loss
 
     <section id="today" aria-labelledby="today-h">
       <div class="wrap">
-        <div class="kicker">// what runs today · v0.2.1</div>
+        <div class="kicker">// what runs today · v0.3</div>
         <h2 id="today-h">The runtime of a machine, without the machine.</h2>
-        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Version 0.2 adds the oracle, moved from open-crank's acceptance suite, and 0.2.1 its verdict files. Every claim below points at the code that backs it.</p>
+        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Version 0.2 adds the oracle, moved from open-crank's acceptance suite, 0.2.1 its verdict files, and 0.3 transport faults. Every claim below points at the code that backs it.</p>
         <div class="grid">
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></div>
@@ -146,7 +146,7 @@ identical       speed_command_loss
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div>
             <h3>Tests that can fail</h3>
-            <p>Sanitizers, gcc and clang, and 19 deliberate mutations: CI breaks each behaviour applications rely on and requires the tests to notice.</p>
+            <p>Sanitizers, gcc and clang, and 27 deliberate mutations: CI breaks each behaviour applications rely on and requires the tests to notice.</p>
             <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/tools/mutation_check.sh">tools/mutation_check.sh</a></div>
           </article>
         </div>
@@ -230,6 +230,7 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
             <p>The device under test sends when it wants and the machine answers in its next step. Tolerances in milliseconds, so the host can carry them: no special hardware.</p>
             <ul>
               <li>CAN and CAN FD, in memory or on SocketCAN (v0.1)</li>
+              <li>links that lose, delay, jitter or corrupt frames, or go bus-off, switched on and off by the scenario (v0.3, <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/docs/link-faults.md">link faults</a>)</li>
               <li>UART for simple machines, from open-robots (when open-robots starts)</li>
               <li>open-tick carries the bytes; the application decides what they mean</li>
             </ul>
@@ -339,9 +340,14 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
               <li class="done"><a href="https://github.com/Open-Heavy-Machinery/open-rig">open-rig</a> draws the flywheel's verdicts over its trace</li>
             </ul>
           </li>
-          <li>
-            <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Transport faults</span><span class="chip">fault injection</span></div>
-            <p>Lost, corrupted and delayed frames, bus-off and jitter, for every application; domain faults stay in the application. Pulled by open-crank v0.3. Exit: open-crank's fault scenarios run on them, each fault has a mutation check, and <code>otk-flywheel</code> uses at least one.</p>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Transport faults</span><span class="chip now">done</span></div>
+            <p>Lost, corrupted and delayed frames, bus-off and jitter, for every application; domain faults stay in the application. A link is one direction of a CAN path, and the scenario switches its faults on and off like any other signal. Pulled by open-crank v0.3.</p>
+            <ul class="pending">
+              <li class="done">open-crank's fault scenarios run on them, in memory, on <code>vcan</code> and against the reference board</li>
+              <li class="done">each fault has a mutation check</li>
+              <li class="done"><code>otk-flywheel</code> uses one: a delayed speed link</li>
+            </ul>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Tang Nano 20K bridge</span><span class="chip">FPGA · pins</span></div>

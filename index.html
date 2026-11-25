@@ -77,7 +77,7 @@
         <figure class="term" aria-labelledby="board-caption">
           <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>github.com/Open-Heavy-Machinery</span></div>
           <ul class="board">
-            <li><a class="name" href="open-tick/">open-tick</a><span class="ver">v0.2.1</span><span class="state">● done</span><span class="what">One clock, scenarios as data, traces, CAN / CAN FD bridges and an oracle that grades by frames and writes its verdicts. The core every project runs on.</span></li>
+            <li><a class="name" href="open-tick/">open-tick</a><span class="ver">v0.3</span><span class="state">● done</span><span class="what">One clock, scenarios as data, traces, CAN / CAN FD bridges with transport faults, and an oracle that grades by frames and writes its verdicts. The core every project runs on.</span></li>
             <li><a class="name" href="open-crank/">open-crank</a><span class="ver">v0.2.2</span><span class="state">● done</span><span class="what">A heavy-duty diesel that answers back over J1939: plant, engine ECU, hydraulic load. Runs on open-tick.</span></li>
             <li><a class="name" href="https://github.com/Open-Heavy-Machinery/open-rig">open-rig</a><span class="ver">v0.2</span><span class="state">● done</span><span class="what">A static browser viewer for open-tick traces: one trace, or two on the same time axis, with the oracle's verdicts drawn over them. open-crank ships a layout for it.</span></li>
             <li><span class="name">open-robots</span><span class="ver">—</span><span class="state planned">○ future, after open-crank</span><span class="what">DC motors, encoders and IMUs for robot firmware, on open-tick, with no J1939.</span></li>
@@ -116,7 +116,7 @@
         <p class="intro">Each machine is its own project with its own physics and protocols. What they share lives in open-tick, and nothing is moved there until a second machine needs it. <strong>open-crank is the priority.</strong> open-tick grows only when open-crank needs it; sibling applications such as open-robots come later.</p>
         <div class="family">
           <article class="project">
-            <div class="top"><span class="pname">open-tick</span><span class="chip now">v0.2.1 done</span></div>
+            <div class="top"><span class="pname">open-tick</span><span class="chip now">v0.3 done</span></div>
             <h3>The beat a simulated machine keeps.</h3>
             <p>Simulated time that never reads a clock, and the bridges that carry a machine's signals to real silicon.</p>
             <ul>
@@ -124,7 +124,8 @@
               <li>scenarios as data, traces that refuse to shift a column</li>
               <li>CAN and CAN FD: in memory, or on SocketCAN</li>
               <li>an oracle that grades any controller by the frames it sends, and writes its verdicts for viewers</li>
-              <li>next: transport faults, then crank wheels on a Tang Nano 20K's pins</li>
+              <li>transport faults: lost, delayed, jittered and corrupted frames, and bus-off</li>
+              <li>next: crank wheels on a Tang Nano 20K's pins</li>
             </ul>
             <div class="links"><a class="main" href="open-tick/">open-tick</a><a href="https://github.com/Open-Heavy-Machinery/open-tick">GitHub</a></div>
           </article>
@@ -243,7 +244,7 @@
         <p class="intro">Pre-alpha does not mean unchecked. These are results from the projects' own CI, and each links to where it is checked.</p>
         <div class="stats">
           <div class="stat"><div class="value">6 / 6</div><div class="label">open-crank scenarios with byte-identical traces after open-tick's extraction (<a href="https://github.com/Open-Heavy-Machinery/open-crank/pull/1">#1</a>)</div></div>
-          <div class="stat"><div class="value">19 + 19</div><div class="label">deliberate mutations, in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/tools/mutation_check.sh">open-crank</a> and <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/tools/mutation_check.sh">open-tick</a>, each caught by the tests</div></div>
+          <div class="stat"><div class="value">19 + 27</div><div class="label">deliberate mutations, in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/tools/mutation_check.sh">open-crank</a> and <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/tools/mutation_check.sh">open-tick</a>, each caught by the tests</div></div>
           <div class="stat"><div class="value">2,594 B</div><div class="label">reference controller and J1939 codec, built for a Cortex-M4F with no <code>double</code> and nothing from libc</div></div>
           <div class="stat"><div class="value">CAN FD</div><div class="label">64-byte frames round-tripped through open-tick's SocketCAN bridge on <code>vcan</code> in CI</div></div>
         </div>
@@ -262,7 +263,7 @@
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.1</span><span class="tl-title">Extraction from open-crank</span><span class="chip now">done</span></div><p>Time, scenarios, traces and CAN bridges as a library; open-crank runs on it with byte-identical traces.</p></li>
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.2</span><span class="tl-title">Oracle</span><span class="chip now">done</span></div><p>Grade any controller only by what its transports show; moved from open-crank's acceptance suite with identical verdicts.</p></li>
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.2.1</span><span class="tl-title">Verdict files</span><span class="chip now">done</span></div><p>The oracle's verdicts as a file: open-rig draws each window, reaction and failure over the trace.</p></li>
-              <li><div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Transport faults</span></div><p>Lost, corrupted and delayed frames, bus-off and jitter, for every application. Pulled by open-crank v0.3.</p></li>
+              <li class="done"><div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Transport faults</span><span class="chip now">done</span></div><p>Lost, corrupted and delayed frames, bus-off and jitter, driven by the scenario, for every application. open-crank's fault scenarios run on them.</p></li>
               <li><div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Tang Nano 20K bridge</span></div><p>Crank and cam wheels, injector capture and analog outputs, the bridge as the clock, and the first fidelity contract. Pulled by open-crank v0.4.</p></li>
               <li><div class="tl-head"><span class="tl-ver">v0.5</span><span class="tl-title">Profiles</span></div><p>Machines described in reviewable YAML, compiled to C. Parameters and wiring, never equations. Pulled by open-crank v0.5.</p></li>
               <li><div class="tl-head"><span class="tl-ver">Track R</span><span class="tl-title">Renode virtual-time driver</span></div><p>Firmware in the loop in CI, without a board, in parallel. Pulled by open-crank's Track R.</p></li>
