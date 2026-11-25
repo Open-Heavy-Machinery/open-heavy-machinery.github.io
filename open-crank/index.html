@@ -57,7 +57,7 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.2.2<span class="long"> · board automation</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.3.1<span class="long"> · robustness on the board</span></div>
           <h1>A heavy-duty diesel that <em>answers back.</em></h1>
           <p class="lede">
             Connect your own firmware over <strong>J1939</strong> and practise against an engine you could never keep at home. <strong>open-crank</strong> simulates the engine, its ECU and its hydraulic load: develop, test and break your controller on a laptop, in CI and on a cheap STM32G431 board today. No engine required.
@@ -342,7 +342,7 @@
           <ul class="checklist">
             <li>The firmware is built from the repository and programmed through the Nucleo's own ST-LINK.</li>
             <li>The bus round trip is measured, which checks the wiring, the termination and the bit rate.</li>
-            <li>All seven scenarios run on the board, with a reset before each one, and you can watch them pass.</li>
+            <li>All fifteen scenarios run on the board, faults included, with a reset before each one, and you can watch them pass.</li>
             <li>A report compares your bench with the reference one: <strong>BENCH OK</strong>, or what differs. Each scenario also leaves its trace and its verdicts, to open in <a href="https://github.com/Open-Heavy-Machinery/open-rig">open-rig</a>.</li>
           </ul>
         </div>
@@ -406,9 +406,17 @@
               <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.2.2">v0.2.2</a>, with the bench run attached</li>
             </ul>
           </li>
-          <li>
-            <div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Robustness on the board</span><span class="chip">fault injection</span></div>
-            <p>Lost, late and corrupted frames, bus-off, DM1, and a watchdog with a defined state after reset. Numbered safety requirements, each traced to a test, and a written safe state. Optionally, a black box and configuration in EEPROM.</p>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.3.1</span><span class="tl-title">Robustness on the board</span><span class="chip now">done</span></div>
+            <p>Failures are testable on the reference board, and the controller's reactions are specified and traced to tests: a written safe state and thirteen numbered safety requirements (<a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/safety.md">safety.md</a>).</p>
+            <ul class="pending">
+              <li class="done">transport faults on <a href="../open-tick/">open-tick</a>'s links: late, jittered, lost and corrupted frames, bus-off</li>
+              <li class="done">TSC1 message counter and checksum: a corrupted request is refused, not obeyed</li>
+              <li class="done">the engine's DM1, also as a multi-packet BAM: the red stop lamp faults, the amber lamp means limp-home</li>
+              <li class="done">a watchdog on the board: after it fires, the controller waits for the operator's fault reset</li>
+              <li class="done">every injected fault has a test of the reaction, and every requirement is traced to a test, in CI</li>
+              <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.3.1">v0.3.1</a>, with the bench run attached</li>
+            </ul>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Level 2: your firmware as the engine ECU</span><span class="chip">Tang Nano 20K · open-tick</span></div>
