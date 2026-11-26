@@ -57,7 +57,7 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.3<span class="long"> · transport faults</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.3.1<span class="long"> · frame logs</span></div>
           <h1>The beat a simulated machine <em>keeps.</em></h1>
           <p class="lede">
             <strong>open-tick</strong> is the part of a simulated machine that does not depend on the machine: one clock that never reads the wall, scenarios as data, traces, and the bridges that carry signals to your microcontroller. Applications bring the physics; <a href="../open-crank/">open-crank</a>, a heavy-duty diesel, already runs on it.
@@ -109,9 +109,9 @@ identical       speed_command_loss
 
     <section id="today" aria-labelledby="today-h">
       <div class="wrap">
-        <div class="kicker">// what runs today · v0.3</div>
+        <div class="kicker">// what runs today · v0.3.1</div>
         <h2 id="today-h">The runtime of a machine, without the machine.</h2>
-        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Version 0.2 adds the oracle, moved from open-crank's acceptance suite, 0.2.1 its verdict files, and 0.3 transport faults. Every claim below points at the code that backs it.</p>
+        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Version 0.2 adds the oracle, moved from open-crank's acceptance suite, 0.2.1 its verdict files, 0.3 transport faults, and 0.3.1 frame logs. Every claim below points at the code that backs it.</p>
         <div class="grid">
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></div>
@@ -231,6 +231,7 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
             <ul>
               <li>CAN and CAN FD, in memory or on SocketCAN (v0.1)</li>
               <li>links that lose, delay, jitter or corrupt frames, or go bus-off, switched on and off by the scenario (v0.3, <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/docs/link-faults.md">link faults</a>)</li>
+              <li>frame logs: every frame of a run with two times, the step that places it on the trace's axis and when it was on the bus, measured by a clock the file names, the kernel's on SocketCAN (v0.3.1, <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/docs/frame-log-format.md">frame log format</a>)</li>
               <li>UART for simple machines, from open-robots (when open-robots starts)</li>
               <li>open-tick carries the bytes; the application decides what they mean</li>
             </ul>
@@ -347,6 +348,15 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
               <li class="done">open-crank's fault scenarios run on them, in memory, on <code>vcan</code> and against the reference board</li>
               <li class="done">each fault has a mutation check</li>
               <li class="done"><code>otk-flywheel</code> uses one: a delayed speed link</li>
+            </ul>
+          </li>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.3.1</span><span class="tl-title">Frame logs</span><span class="chip now">done</span></div>
+            <p>Every frame of a run in a file, with what the links did to it and two times: the step, which places it on the trace's axis, and when it was on the bus, measured by a clock the file names. Pulled by <a href="https://github.com/Open-Heavy-Machinery/open-rig">open-rig</a> v0.3, which shows the bus next to the trace.</p>
+            <ul class="pending">
+              <li class="done">in memory, a link's delay shows exactly; lost frames carry their reason; two runs give the same file</li>
+              <li class="done">on <code>vcan</code>, received and sent frames carry the kernel's timestamps</li>
+              <li class="done">existing traces and verdict files are unchanged, byte for byte</li>
             </ul>
           </li>
           <li>
