@@ -23,7 +23,7 @@ h1 em { font-style: normal; color: #f0883e; }
 .sub { font-size: 23px; line-height: 1.42; color: #8b949e; }
 .panel { position: absolute; left: 583px; top: 97px; width: 560px; background: #010409; border: 1px solid #30363d; border-radius: 14px; padding: 20px 20px; font-family: "DejaVu Sans Mono", ui-monospace, monospace; }
 .panel .bar { font-size: 16px; color: #8b949e; margin-bottom: 18px; }
-.row { display: grid; grid-template-columns: 170px 70px 1fr; align-items: baseline; padding: 14px 0; border-top: 1px solid #21262d; font-size: 19px; }
+.row { display: grid; grid-template-columns: 160px 90px 1fr; align-items: baseline; padding: 14px 0; border-top: 1px solid #21262d; font-size: 19px; }
 .row .n { color: #e6edf3; font-weight: 700; }
 .row .v { color: #8b949e; }
 .row .s { color: #3fb950; }
@@ -32,3 +32,10 @@ h1 em { font-style: normal; color: #f0883e; }
 .out { font-size: 19px; line-height: 1.62; color: #c9d1d9; }
 .out .ok { color: #3fb950; }
 .out .sum { color: #f0883e; }
+.out { white-space: pre; }
+.chart { display: block; margin: 0 0 14px; }
+.chart .base { stroke: #30363d; stroke-width: 1; }
+.chart .line { fill: none; stroke: #f0883e; stroke-width: 3; stroke-linejoin: round; }
+.frames { font-size: 19px; line-height: 1.7; color: #c9d1d9; border-top: 1px solid #21262d; padding-top: 12px; }
+.frames .id { color: #8b949e; }
+.frames b { color: #f0883e; font-weight: 700; }

@@ -22,7 +22,7 @@ Open `index.html` in a browser. Every link between pages is relative, so the sit
 
 ## Social cards
 
-`tools/og/render.sh` renders `og-card.png` and `open-tick/og-card.png` from the HTML templates in `tools/og/`, with headless Chrome. `open-crank/og-card.png` predates the templates and is kept as it is.
+`tools/og/render.sh` renders the three cards from the HTML templates in `tools/og/`, with headless Chrome. The data in each card is real: open-tick's `examples/flywheel/delay.frames.csv`, and for open-crank a run of `open-crank-run scenarios/hoist_step.csv` (the template says which commit). Re-render them when a version on the site changes.
 
 ## Logo files
 
