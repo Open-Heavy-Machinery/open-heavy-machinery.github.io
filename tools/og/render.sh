@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: Apache-2.0
 # Renders the 1200x630 social cards from the HTML templates next to this
-# script, with headless Chrome. open-crank/og-card.png predates the templates
-# and is kept as it is.
+# script, with headless Chrome.
 #
 # Usage: tools/og/render.sh   (needs google-chrome or chromium)
 set -euo pipefail
@@ -16,3 +15,4 @@ render() { # template output
 }
 render home.html "$ROOT/og-card.png"
 render open-tick.html "$ROOT/open-tick/og-card.png"
+render open-crank.html "$ROOT/open-crank/og-card.png"

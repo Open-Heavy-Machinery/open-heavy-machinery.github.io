@@ -18,7 +18,7 @@
   <meta property="og:image" content="https://open-heavy-machinery.github.io/open-crank/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="open-crank: engine speed recovering from a hydraulic load step, with J1939 frames">
+  <meta property="og:image:alt" content="open-crank v0.3.2: engine speed recovering from a hydraulic load step, with a TSC1 and an EEC1 frame">
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="stylesheet" href="../assets/site.css">
@@ -57,7 +57,7 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.3.1<span class="long"> · robustness on the board</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.3.2<span class="long"> · frame logs and the bus dictionary</span></div>
           <h1>A heavy-duty diesel that <em>answers back.</em></h1>
           <p class="lede">
             Connect your own firmware over <strong>J1939</strong> and practise against an engine you could never keep at home. <strong>open-crank</strong> simulates the engine, its ECU and its hydraulic load: develop, test and break your controller on a laptop, in CI and on a cheap STM32G431 board today. No engine required.
@@ -106,7 +106,7 @@
 
     <section id="today" aria-labelledby="today-h">
       <div class="wrap">
-        <div class="kicker">// what runs today · v0.3.1</div>
+        <div class="kicker">// what runs today · v0.3.2</div>
         <h2 id="today-h">A complete control loop, on the bus, in CI.</h2>
         <p class="intro">A Level 1 machine: a controller asks a simulated engine for speed over J1939 while a hydraulic hoist loads it, and tests prove what happens, also when the bus, the engine or the controller itself fails. Since version 0.1 the controller runs on a real board (0.2), an acceptance suite grades any controller by its frames (0.2.1), the board is tested with one command (0.2.2), and faults are injected and their reactions traced to safety requirements (0.3.1). Every claim below points at the code that backs it.</p>
         <div class="grid">
@@ -416,6 +416,15 @@
               <li class="done">a watchdog on the board: after it fires, the controller waits for the operator's fault reset</li>
               <li class="done">every injected fault has a test of the reaction, and every requirement is traced to a test, in CI</li>
               <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.3.1">v0.3.1</a>, with the bench run attached</li>
+            </ul>
+          </li>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.3.2</span><span class="tl-title">Frame logs and the bus dictionary</span><span class="chip now">done</span></div>
+            <p>Every run can write its CAN frames, each with the step that places it on the trace and the time it was on the bus. The bus contract is a DBC. Controller and firmware are unchanged since v0.3.1.</p>
+            <ul class="pending">
+              <li class="done"><code>--frames</code> in every runner, from <a href="../open-tick/">open-tick</a> v0.3.1's frame logs; open-rig shows them beside the trace</li>
+              <li class="done"><a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/open-crank.dbc">open-crank.dbc</a>, checked against the encoders and their periods with cantools in CI</li>
+              <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.3.2">v0.3.2</a></li>
             </ul>
           </li>
           <li>
