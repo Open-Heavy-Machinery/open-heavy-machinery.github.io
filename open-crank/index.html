@@ -18,7 +18,7 @@
   <meta property="og:image" content="https://open-heavy-machinery.github.io/open-crank/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="open-crank v0.3.2: engine speed recovering from a hydraulic load step, with a TSC1 and an EEC1 frame">
+  <meta property="og:image:alt" content="open-crank v0.4.0: engine speed through a hydraulic load step with the reference engine ECU on a real board, and where its injections landed">
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="stylesheet" href="../assets/site.css">
@@ -40,6 +40,7 @@
       <nav class="topnav" aria-label="Primary">
         <a href="#today">What runs</a>
         <a href="#how">How it works</a>
+        <a href="#level2">Level 2</a>
         <a href="#roadmap">Roadmap</a>
         <a class="gh" href="https://github.com/Open-Heavy-Machinery/open-crank">GitHub</a>
       </nav>
@@ -57,10 +58,10 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.3.2<span class="long"> · frame logs and the bus dictionary</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-crank · v0.4.0<span class="long"> · Level 2, your firmware as the engine ECU</span></div>
           <h1>A heavy-duty diesel that <em>answers back.</em></h1>
           <p class="lede">
-            Connect your own firmware over <strong>J1939</strong> and practise against an engine you could never keep at home. <strong>open-crank</strong> simulates the engine, its ECU and its hydraulic load: develop, test and break your controller on a laptop, in CI and on a cheap STM32G431 board today. No engine required.
+            Connect your own firmware over <strong>J1939</strong> and practise against an engine you could never keep at home. <strong>open-crank</strong> simulates the engine, its ECU and its hydraulic load: develop, test and break your controller on a laptop, in CI and on a cheap STM32G431 board today. Or be the engine's own ECU: since v0.4 your firmware can read the crank and cam and fire the injectors. No engine required.
           </p>
           <div class="cta">
             <a class="btn primary" href="https://github.com/Open-Heavy-Machinery/open-crank">
@@ -106,9 +107,9 @@
 
     <section id="today" aria-labelledby="today-h">
       <div class="wrap">
-        <div class="kicker">// what runs today · v0.3.2</div>
+        <div class="kicker">// what runs today · v0.4.0</div>
         <h2 id="today-h">A complete control loop, on the bus, in CI.</h2>
-        <p class="intro">A Level 1 machine: a controller asks a simulated engine for speed over J1939 while a hydraulic hoist loads it, and tests prove what happens, also when the bus, the engine or the controller itself fails. Since version 0.1 the controller runs on a real board (0.2), an acceptance suite grades any controller by its frames (0.2.1), the board is tested with one command (0.2.2), and faults are injected and their reactions traced to safety requirements (0.3.1). Every claim below points at the code that backs it.</p>
+        <p class="intro">A Level 1 machine: a controller asks a simulated engine for speed over J1939 while a hydraulic hoist loads it, and tests prove what happens, also when the bus, the engine or the controller itself fails. Since version 0.1 the controller runs on a real board (0.2), an acceptance suite grades any controller by its frames (0.2.1), the board is tested with one command (0.2.2), faults are injected and their reactions traced to safety requirements (0.3.1), every run writes its frames (0.3.2), and the controller reports its own faults (0.3.3). Since 0.4 there is a second way to use it: <a href="#level2">Level 2</a>, your firmware as the engine ECU. Every claim below points at the code that backs it.</p>
         <div class="grid">
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 12V5"/><circle cx="12" cy="5" r="1.5" fill="currentColor"/></svg></div>
@@ -143,7 +144,7 @@
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div>
             <h3>Tests that can fail</h3>
-            <p>Closed-loop tests, sanitizers, and 32 deliberate mutations: CI breaks each safety behaviour on purpose and requires the suite to notice, and broken controllers must fail the acceptance suite. Thirteen numbered safety requirements are each traced to a test. Every pull request's traces are compared, byte for byte, with its base.</p>
+            <p>Closed-loop tests, sanitizers, and 70 deliberate mutations: CI breaks each safety behaviour on purpose and requires the suite to notice, and broken controllers must fail the acceptance suite. Fourteen numbered safety requirements are each traced to a test. Every pull request's traces are compared, byte for byte, with its base.</p>
             <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/tools/mutation_check.sh">tools/mutation_check.sh</a> · <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/tools/compare_traces.sh">compare_traces.sh</a> · <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/docs/safety.md">safety.md</a></div>
           </article>
         </div>
@@ -294,16 +295,16 @@
               <p>Your firmware is the machine's supervisory controller, a crane, vessel or generator-set controller, EMS or PMS. It asks the engine for speed, reads its status and drives the loads. All it needs is a CAN bus; <code>vcan</code> will do.</p>
             </div>
             <div class="level">
-              <h3>Level 2 · engine ECU <span class="chip">v0.4</span></h3>
-              <p>Your firmware is the controller inside the engine. It reads crank and cam signals and sensors and commands fuel, so it needs microsecond-accurate waveforms: they will come from <a href="../open-tick/">open-tick</a>'s Tang Nano 20K bridge.</p>
+              <h3>Level 2 · engine ECU <span class="chip now">v0.4</span></h3>
+              <p>Your firmware is the controller inside the engine. It reads a 60−2 crank and a cam and fires six injectors, so it needs microsecond-accurate waveforms: they come from <a href="../open-tick/">open-tick</a>'s Tang Nano 20K bridge, which captures the injector pulses for the plant to burn. Analog sensors are planned. <a href="#level2">How to run it</a>.</p>
             </div>
           </div>
         </div>
         <div class="zones">
-          <div class="zone"><h3>portable/</h3><p>The controller and the J1939 codec. Depends on <code>stdint.h</code>, <code>stdbool.h</code>, <code>stddef.h</code> and nothing else. Goes to firmware.</p></div>
+          <div class="zone"><h3>portable/</h3><p>The controller, the reference engine ECU's logic and the J1939 codec. Depends on <code>stdint.h</code>, <code>stdbool.h</code>, <code>stddef.h</code> and nothing else. Goes to firmware.</p></div>
           <div class="zone"><h3>sim/</h3><p>Plant physics, the engine ECU, loads, the bench, scenarios. Host only, double precision, never reads a clock.</p></div>
           <div class="zone"><h3>platforms/</h3><p>Thin glue per target: headless host, Linux SocketCAN and the STM32G4 reference board today; then FPGA; Renode in parallel.</p></div>
-          <div class="zone"><h3>external/open-tick</h3><p><a href="../open-tick/">open-tick</a>, pinned as a git submodule: the clock, scenarios, traces, the pacer and the SocketCAN bridge. open-crank brings the engine.</p></div>
+          <div class="zone"><h3>external/open-tick</h3><p><a href="../open-tick/">open-tick</a>, pinned as a git submodule: the clock, scenarios, traces, the pacer, the SocketCAN bridge and the Tang Nano 20K's hard driver. open-crank brings the engine.</p></div>
         </div>
         <p class="zone-rule">Dependencies point one way, and CI enforces it: if <code>portable/</code> ever picks up a <code>printf</code>, a socket, a software-emulated <code>double</code> or anything from open-tick, the build fails.</p>
       </div>
@@ -354,6 +355,45 @@
 <span class="p">$ </span>sudo ip link set can0 up
 <span class="c"># about 2.5 minutes, then report.md</span>
 <span class="p">$ </span>tools/board/bench.sh</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="level2" aria-labelledby="level2-h">
+      <div class="wrap start">
+        <div>
+          <div class="kicker">// level 2 · v0.4</div>
+          <h2 id="level2-h">Or be the engine's own ECU.</h2>
+          <p>At Level 2 your firmware is the controller inside the engine. It reads the crankshaft's 60−2 tooth wheel and the camshaft's pulse, works out where each piston is, and fires each injector at the right angle for the right time; the machine's controller asks it for a speed over J1939 (TSC1) and it reports back (EEC1). open-crank simulates the engine around it: every injection is captured, placed at the crank angle where it began, and burnt in its cylinder if it landed in that cylinder's window. Fire at the wrong angle or on the wrong cylinder and the engine does not run.</p>
+          <ul class="checklist">
+            <li><strong>In memory, no hardware:</strong> the reference ECU's logic against the plant, through a model of the bridge, in a second. Seven scenarios, each with its criteria: start to idle, hold 750, 1500 and 2100 rpm, a 570 Nm load step, a lost crank tooth, an overspeed.</li>
+            <li><strong>On the pins:</strong> the Level 1 bench above, plus a Sipeed Tang Nano 20K running <a href="../open-tick/">open-tick</a>'s bridge, wired to the NUCLEO-G431KB as in <a href="https://github.com/Open-Heavy-Machinery/open-crank/blob/main/platforms/stm32g4/WIRING-L2.md">WIRING-L2.md</a>: crank, cam, six injectors and ground, nine jumper wires with a series resistor each.</li>
+            <li>Three scripts check the bench in order: every wire on its own; the reference ECU at 200, 750, 1500 and 2400 rpm, where every injection must start within 0.5° of 10° before its TDC; then every scenario in a closed loop, the plant on the PC one step per millisecond, the ECU on the board.</li>
+            <li>To put your own ECU there, flash your firmware instead of <code>oc-stm32g4-ecu</code>, with the same pins and the same CAN bus, and run <code>hilrun.py --no-flash</code>.</li>
+          </ul>
+          <p>On the reference bench (2026-11-28), every scenario the board can play passed every criterion, 29 of 29, and the start of injection landed within 0.0264° at p99 and 0.0301° at most, against a budget of 0.1° and 0.5° (<a href="https://github.com/Open-Heavy-Machinery/open-crank/tree/main/docs/measurements/2026-11-28-hil">the runs</a>). Known limits: no analog sensors yet; the plant applies an injection about 30 ms after it happened, so mean-speed control is faithful and per-cylinder dynamics are not; the lost tooth runs in memory only (<a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.4.0">all of them</a>).</p>
+        </div>
+        <div>
+          <div class="code">
+            <div class="code-bar"><span>in memory</span><button class="copy" type="button" data-copy="l2mem">copy</button></div>
+<pre id="l2mem"><span class="p">$ </span>./build/open-crank-l2-run scenarios/l2/hold_1500.csv
+<span class="c"># where every injection landed, against where it was commanded</span>
+<span class="p">$ </span>./build/open-crank-l2-run scenarios/l2/hoist_step.csv --trace hoist_l2.csv --jitter hoist_l2.jitter.csv</pre>
+          </div>
+          <div class="code" style="margin-top: 1rem">
+            <div class="code-bar"><span>on the pins</span><button class="copy" type="button" data-copy="l2pins">copy</button></div>
+<pre id="l2pins"><span class="c"># the FPGA tools, into ~/.cache, no sudo; then the bridge's bitstream</span>
+<span class="p">$ </span>eval "$(external/open-tick/tools/fpga_toolchain.sh)"
+<span class="p">$ </span>external/open-tick/gateware/tang_nano_20k/build.sh
+<span class="p">$ </span>cmake --build build --target otk-hard-probe open-crank-ecu-check open-crank-hil
+<span class="p">$ </span>B=external/open-tick/build-gateware/bridge.fs
+<span class="c"># every wire, about 15 s</span>
+<span class="p">$ </span>tools/board/wirecheck.py --probe build/open-tick/otk-hard-probe --bitstream $B
+<span class="c"># the ECU at fixed speeds, about 4 min</span>
+<span class="p">$ </span>tools/board/ecucheck.py --check build/open-crank-ecu-check --bitstream $B
+<span class="c"># the closed loop, about 4 min</span>
+<span class="p">$ </span>tools/board/hilrun.py --hil build/open-crank-hil --bitstream $B</pre>
+          </div>
         </div>
       </div>
     </section>
@@ -427,9 +467,25 @@
               <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.3.2">v0.3.2</a></li>
             </ul>
           </li>
-          <li>
-            <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Level 2: your firmware as the engine ECU</span><span class="chip">Tang Nano 20K · open-tick</span></div>
-            <p>The simulated ECU steps aside and fuel comes from your injector pulses. 60-2 crank and cam waveforms, analog sensors and injector capture from <a href="../open-tick/">open-tick</a>'s Tang Nano 20K bridge, with a stated and measured jitter budget. An FPGA, because Level 2 needs many independent timed channels at once. The plant stays on a CPU.</p>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.3.3</span><span class="tl-title">The controller's DM1 and the Level 2 harness</span><span class="chip now">done</span></div>
+            <p>The last release before Level 2. The reference controller reports its own faults as DM1, the board bench measures the controller step, and the wiring to the Tang Nano 20K is decided and checked wire by wire on the board.</p>
+            <ul class="pending">
+              <li class="done">in FAULT, the controller's DM1 with the red stop lamp and one DTC within 1.1 s: requirement SR-14, traced to its tests</li>
+              <li class="done">the harness check passed on all eight wired lines at 1500, 3000 and 6000 rpm</li>
+              <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.3.3">v0.3.3</a></li>
+            </ul>
+          </li>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Level 2: your firmware as the engine ECU</span><span class="chip now">done</span></div>
+            <p>The simulated ECU steps aside and fuel comes from your injector pulses. A 60−2 crank and a cam from <a href="../open-tick/">open-tick</a>'s Tang Nano 20K bridge, generated from the plant's angle, and injector capture, with a stated and measured jitter budget. An FPGA, because Level 2 needs many independent timed channels at once. The plant stays on a CPU.</p>
+            <ul class="pending">
+              <li class="done">the reference engine ECU on a NUCLEO-G431KB synchronises and holds a requested speed against the plant in a closed loop: 29 of 29 criteria on the board</li>
+              <li class="done">a jitter budget stated and measured in every run: start of injection within 0.0264° at p99 and 0.0301° at most, against 0.1° and 0.5°</li>
+              <li class="done">Level 1 unchanged: the fifteen scenarios' traces byte-identical to v0.3.3</li>
+              <li>analog sensors: two channels wired, not yet measured</li>
+              <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-crank/releases/tag/v0.4.0">v0.4.0</a></li>
+            </ul>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.5</span><span class="tl-title">Two engines on one machine</span><span class="chip">J1939-81</span></div>

@@ -9,8 +9,8 @@ Plain HTML and CSS, served by GitHub Pages from `main`. There is no build step a
 | Path | Page |
 |---|---|
 | `index.html` | The organisation: mission, how it started, the projects, how they fit, verified results, roadmap overview, principles, how to get involved |
-| `open-tick/index.html` | open-tick, the core: what runs in v0.2 (with the oracle), the flywheel example, transports and the fidelity contract, the extraction from open-crank, roadmap |
-| `open-crank/index.html` | open-crank, the heavy-duty diesel: J1939 frames, the hoist step chart, how it works, quick start, roadmap |
+| `open-tick/index.html` | open-tick, the core: what runs today, the flywheel example, transports and the fidelity contract, the extraction from open-crank, the Tang Nano 20K bridge on the pins, roadmap |
+| `open-crank/index.html` | open-crank, the heavy-duty diesel: J1939 frames, the hoist step chart, how it works, quick start, the board, Level 2, roadmap |
 | `assets/site.css` | Shared styles. The palette and type are defined once in `:root` |
 | `assets/logo/` | The logo as SVG, PNG and JPG (mark, light mark, icon, wordmarks), its inline HTML ready to paste, and the palette, on a page of its own (`assets/logo/index.html`) |
 
@@ -22,7 +22,7 @@ Open `index.html` in a browser. Every link between pages is relative, so the sit
 
 ## Social cards
 
-`tools/og/render.sh` renders the three cards from the HTML templates in `tools/og/`, with headless Chrome. The data in each card is real: open-tick's `examples/flywheel/delay.frames.csv`, and for open-crank a run of `open-crank-run scenarios/hoist_step.csv` (the template says which commit). Re-render them when a version on the site changes.
+`tools/og/render.sh` renders the three cards from the HTML templates in `tools/og/`, with headless Chrome. The data in each card is real: open-crank's Level 2 run of `hoist_step` on the board (`docs/measurements/2026-11-28-hil/`), its trace for open-crank and its hard-run budget for open-tick (each template says which file, commit and md5). Re-render them when a version on the site changes.
 
 ## Logo files
 

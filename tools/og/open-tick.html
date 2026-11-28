@@ -1,12 +1,14 @@
 <!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="card.css"></head><body>
+<!-- Data: open-crank docs/measurements/2026-11-28-hil/hoist_step.budget.csv at open-crank 445283c (v0.4.0),
+     md5 565d2a98c61d86a53f30b59e517ee5ee: open-tick's budget of that hard run, rounded. -->
 <div class="left">
   <div class="brand"><svg width="40" height="40" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" fill="none" stroke="#f0883e" stroke-width="3"/><line x1="16" y1="16" x2="16" y2="8.5" stroke="#f0883e" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="8.5" r="3.2" fill="#f0883e"/><circle cx="16" cy="16" r="2.2" fill="#0d1117" stroke="#f0883e" stroke-width="2"/></svg> Open Heavy Machinery</div>
-  <div class="pill">open-tick · v0.3.1</div>
+  <div class="pill">open-tick · v0.4.0</div>
   <h1 class="long">The beat a simulated machine <em>keeps.</em></h1>
-  <p class="sub">One clock, scenarios, traces and CAN bridges, to test real firmware against any simulated machine.</p>
+  <p class="sub">One clock, scenarios, traces, CAN bridges and a Tang Nano 20K on the pins, to test real firmware against any simulated machine.</p>
 </div>
 <div class="panel">
-  <div class="bar">examples/flywheel/delay.frames.csv · bus_clock=sim</div>
-  <div class="out">t_s    t_bus_s dir      id  data<br>3.300  3.300   to_dut   101 DC05<br>3.300  3.300   from_dut 200 00<br>3.300  <span class="sum">3.600</span>   to_dut   100 C502<br><br><span class="ok">every frame, two times:</span><br>SPEED reached the DUT 300 ms late</div>
+  <div class="bar">hoist_step.budget.csv · Tang Nano 20K · H=16</div>
+  <div class="out">quantity        declared measured<br>underruns       0        0<br>rtt_p99         2.20 ms  1.94 ms<br>dut_to_plant    31.2 ms  <span class="sum">30.9 ms</span><br>can_tx_err_p99  1.10 ms  0.59 ms<br><br><span class="ok">result=ok:</span> on the bridge's clock,<br>every declared row within it</div>
 </div>
 </body></html>
