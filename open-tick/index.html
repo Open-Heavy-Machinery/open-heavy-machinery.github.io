@@ -18,7 +18,7 @@
   <meta property="og:image" content="https://open-heavy-machinery.github.io/open-tick/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="open-tick v0.3.1: a frame log, every frame with two times; a SPEED frame 300 ms late">
+  <meta property="og:image:alt" content="open-tick v0.4.0: the budget of a hard run on the Tang Nano 20K bridge, declared and measured">
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="stylesheet" href="../assets/site.css">
@@ -40,6 +40,7 @@
       <nav class="topnav" aria-label="Primary">
         <a href="#today">What runs</a>
         <a href="#how">How it works</a>
+        <a href="#pins">On the pins</a>
         <a href="#roadmap">Roadmap</a>
         <a class="gh" href="https://github.com/Open-Heavy-Machinery/open-tick">GitHub</a>
       </nav>
@@ -57,7 +58,7 @@
     <div class="hero" id="top">
       <div class="wrap">
         <div>
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.3.1<span class="long"> · frame logs</span></div>
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>open-tick · v0.4.0<span class="long"> · the Tang Nano 20K bridge</span></div>
           <h1>The beat a simulated machine <em>keeps.</em></h1>
           <p class="lede">
             <strong>open-tick</strong> is the part of a simulated machine that does not depend on the machine: one clock that never reads the wall, scenarios as data, traces, and the bridges that carry signals to your microcontroller. Applications bring the physics; <a href="../open-crank/">open-crank</a>, a heavy-duty diesel, already runs on it.
@@ -72,6 +73,7 @@
           <ul class="facts" aria-label="Key facts">
             <li>C11, Apache-2.0</li>
             <li>core builds on any C11 host</li>
+            <li>a Tang Nano 20K on the pins</li>
             <li>open-crank runs on it</li>
           </ul>
         </div>
@@ -103,15 +105,15 @@ identical       speed_command_loss
           <p>Voltages on pins, edges with timing, frames on a bus. Your firmware cannot see the crane, the robot or the train behind them. If something produces those signals faithfully enough, it cannot tell a simulated machine from a real one.</p>
           <p>Writing the first machine, a diesel engine, meant writing a clock, scenarios, traces and a CAN bridge, and none of them cared about diesel. open-tick is that part, so the next machine does not have to write it again.</p>
         </div>
-        <p class="quote">"One clock, one step, any machine, and an exact statement of how faithful it is."<small>The promise open-tick is built to keep. The last part is planned.</small></p>
+        <p class="quote">"One clock, one step, any machine, and an exact statement of how faithful it is."<small>The promise open-tick is built to keep. The last part came in v0.4.</small></p>
       </div>
     </section>
 
     <section id="today" aria-labelledby="today-h">
       <div class="wrap">
-        <div class="kicker">// what runs today · v0.3.1</div>
+        <div class="kicker">// what runs today · v0.4.0</div>
         <h2 id="today-h">The runtime of a machine, without the machine.</h2>
-        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Version 0.2 adds the oracle, moved from open-crank's acceptance suite, 0.2.1 its verdict files, 0.3 transport faults, and 0.3.1 frame logs. Every claim below points at the code that backs it.</p>
+        <p class="intro">Version 0.1 is the extraction: the parts of open-crank that did not depend on a diesel engine, as a library with its own tests. Version 0.2 adds the oracle, moved from open-crank's acceptance suite, 0.2.1 its verdict files, 0.3 transport faults, 0.3.1 frame logs, and 0.4 the first bridge on the pins, a Tang Nano 20K, with its fidelity contract. Every claim below points at the code that backs it.</p>
         <div class="grid">
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></div>
@@ -146,8 +148,20 @@ identical       speed_command_loss
           <article class="card">
             <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div>
             <h3>Tests that can fail</h3>
-            <p>Sanitizers, gcc and clang, and 27 deliberate mutations: CI breaks each behaviour applications rely on and requires the tests to notice.</p>
+            <p>Sanitizers, gcc and clang, 90 deliberate mutations in the C and 17 in the gateware: CI breaks each behaviour applications rely on and requires the tests to notice. The bitstream is built twice and compared.</p>
             <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/tools/mutation_check.sh">tools/mutation_check.sh</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg></div>
+            <h3>A machine on your pins</h3>
+            <p>A Sipeed Tang Nano 20K, an FPGA board of about 25 USD, runs open-tick's gateware: a 60−2 crank wheel and a cam generated from the plant's angle, six captures that time the pulses your firmware sends back to 37 ns, and four analog outputs, not yet measured on a board.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/tree/main/gateware/tang_nano_20k">gateware/tang_nano_20k</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/docs/bridge-protocol.md">bridge protocol</a></div>
+          </article>
+          <article class="card">
+            <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5h4"/><path d="M3 3l3 3"/></svg></div>
+            <h3>The bridge keeps the time</h3>
+            <p>The hard driver keeps the plant 16 steps ahead of the bridge and steps it on the bridge's 27 MHz oscillator, not the PC's clock. Every run writes its budget, declared and measured: underruns, round trip, clock mapping, CAN timing, the delay from your firmware back to the plant.</p>
+            <div class="where"><a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/host/include/opentick/host/hard_loop.h">hard_loop.h</a> · <a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/docs/bridge-protocol.md#9-the-budget-of-a-hard-run">the budget</a></div>
           </article>
         </div>
       </div>
@@ -216,7 +230,7 @@ identical       speed_command_loss
         <div class="code">
           <div class="code-bar"><span>the same loop for every driver</span></div>
 <pre><span class="k">OtkDriver</span> d;
-otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <span class="c">// free-run in CI, paced for SIL</span>
+otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <span class="c">// free-run in CI, paced for SIL, hard on a bridge</span>
 <span class="k">while</span> (!otk_player_done(&amp;player, now)) {
     otk_player_advance(&amp;player, now);            <span class="c">// scenario events due at this step</span>
     machine_step(&amp;m, &amp;to_dut);                   <span class="c">// your physics; frames out</span>
@@ -237,32 +251,32 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
             </ul>
           </div>
           <div class="card">
-            <h3>Signal-level transports <span class="chip">planned</span></h3>
+            <h3>Signal-level transports <span class="chip now">Tang Nano 20K today</span></h3>
             <p>Edges, levels and registers, answered within a bit time. They live in the bridge, which the core feeds once per step.</p>
             <ul>
-              <li>rotary patterns: encoders and 60−2 crank wheels are one primitive</li>
-              <li>pulse capture: PWM duty, direction, injector timing</li>
-              <li>I²C and SPI slaves answered from a register map</li>
+              <li>rotary patterns: a 60−2 crank wheel and a cam from a 48-bit phase (v0.4); encoders are the same primitive (when open-robots starts)</li>
+              <li>pulse capture: six channels with their exact ticks, for injector timing (v0.4); PWM duty and direction later</li>
+              <li>analog outputs: four sigma-delta channels (v0.4, not yet measured on a board)</li>
+              <li>I²C and SPI slaves answered from a register map (when a sibling needs them)</li>
             </ul>
           </div>
         </div>
         <div class="contract">
           <div>
-            <h3>The fidelity contract <span class="chip">planned · v0.4</span></h3>
-            <p>"The microcontroller cannot tell the difference" is true only within limits. Each machine will declare what it needs from a bridge, and each bridge what it guarantees. A run that cannot be faithful is refused, naming the signal and the number that fails, instead of passing against a degraded reality.</p>
-            <p>During runs on real silicon, the measured jitter and latency go into the trace, so the claim is checked rather than assumed.</p>
+            <h3>The fidelity contract <span class="chip now">v0.4</span></h3>
+            <p>"The microcontroller cannot tell the difference" is true only within limits. Each machine declares what it needs from a bridge, and each bridge what it guarantees, in a small CSV. A run that cannot be faithful is refused before the bridge is opened, naming the signal and the number that fails, instead of passing against a degraded reality.</p>
+            <p>The bridge's file holds only what was measured on a board or follows from its clock. During each run the measured timing goes into its budget, so the claim is checked rather than assumed (<a href="https://github.com/Open-Heavy-Machinery/open-tick/blob/main/docs/bridge-protocol.md#7-the-fidelity-contract-version-1">version 1</a>).</p>
           </div>
           <div class="code">
-            <div class="code-bar"><span>illustrative only: the format is not designed yet</span></div>
-<pre><span class="c"># open-robots: one wheel</span>
-<span class="k">signals</span>:
-  - <span class="k">name</span>: <span class="v">wheel_fl.encoder</span>
-    <span class="k">kind</span>: <span class="v">quadrature_out</span>
-    <span class="k">max_edge_rate_hz</span>: <span class="v">12000</span>
-    <span class="k">level</span>: <span class="v">3v3</span>
-  - <span class="k">name</span>: <span class="v">wheel_fl.pwm</span>
-    <span class="k">kind</span>: <span class="v">pwm_capture</span>
-    <span class="k">latency_budget_us</span>: <span class="v">1000</span></pre>
+            <div class="code-bar"><span>excerpt: what open-crank's Level 2 asks, and what the Tang Nano 20K gives</span></div>
+<pre><span class="c"># open-crank sim/l2/fidelity.csv (side=machine)</span>
+<span class="k">signal,direction,transport,max_rate_hz,resolution_ns,latency_ns,jitter_ns</span>
+crank,to_dut,rotary,<span class="v">2400</span>,100,,<span class="v">1000</span>
+inj1,from_dut,capture,<span class="v">20</span>,1000,<span class="v">40000000</span>,
+<span class="c"># open-tick gateware/tang_nano_20k/fidelity.csv (side=bridge)</span>
+crank,to_dut,rotary,<span class="v">5800</span>,37,,<span class="v">520</span>
+capture0,from_dut,capture,<span class="v">25</span>,37,,
+<span class="c"># dut_to_plant_delay_ns=31200000: within 40 ms, so the run goes ahead</span></pre>
           </div>
         </div>
       </div>
@@ -306,6 +320,34 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
 <span class="p">$ </span>./build/otk-flywheel examples/flywheel/step.csv --driver paced
 <span class="c"># graded by the oracle: pass or fail</span>
 <span class="p">$ </span>./build/otk-flywheel examples/flywheel/step.csv --criteria examples/flywheel/step.accept.csv</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="pins" aria-labelledby="pins-h">
+      <div class="wrap start">
+        <div>
+          <div class="kicker">// on the pins · v0.4</div>
+          <h2 id="pins-h">A flywheel on a Tang Nano 20K.</h2>
+          <p>Over its USB serial link the host sends the bridge, one step ahead at a time, what each output should do; the bridge plays it on its pins against its own oscillator, captures the pulses the device under test sends back, and reports them with their exact ticks.</p>
+          <ul class="checklist">
+            <li>The FPGA toolchain installs pinned by SHA-256 into <code>~/.cache</code>, without sudo; the bitstream builds from the repository.</li>
+            <li>The flywheel steps on the bridge's clock, its crank pattern turning at the flywheel's speed on pin 73.</li>
+            <li>Every run writes <code>hard.budget.csv</code>: its budget, declared and measured.</li>
+            <li>With <code>--fidelity</code> the run is checked first against what the bridge guarantees, and refused (exit 5) if it asks for more.</li>
+            <li>A whole machine on it: <a href="../open-crank/#level2">open-crank's Level 2</a>, an engine ECU on a real board against the simulated engine.</li>
+          </ul>
+          <p>Known limits on the reference bench (2026-11-28): the Tang's USB chip resets about every 15 minutes of running, and a run under way then ends <code>aborted</code>; at 1 ms steps a run is <code>degraded</code> now and then, by a few steps (<a href="https://github.com/Open-Heavy-Machinery/open-tick/releases/tag/v0.4.0">all of them</a>).</p>
+        </div>
+        <div class="code">
+          <div class="code-bar"><span>shell</span><button class="copy" type="button" data-copy="hard">copy</button></div>
+<pre id="hard"><span class="c"># yosys, nextpnr and openFPGALoader, pinned, into ~/.cache (no sudo)</span>
+<span class="p">$ </span>eval "$(tools/fpga_toolchain.sh)"
+<span class="p">$ </span>gateware/tang_nano_20k/build.sh
+<span class="c"># into the Tang's SRAM: every run starts from a freshly programmed bridge</span>
+<span class="p">$ </span>openFPGALoader -b tangnano20k build-gateware/bridge.fs
+<span class="p">$ </span>./build/otk-flywheel examples/flywheel/hard60.csv --driver hard --trace hard.csv \
+    --dev /dev/serial/by-id/usb-SIPEED_USB_Debugger_&lt;serial&gt;-if01-port0</pre>
         </div>
       </div>
     </section>
@@ -359,9 +401,17 @@ otk_driver_init(&amp;d, kind, otk_ns_from_ms(<span class="v">10</span>));   <spa
               <li class="done">existing traces and verdict files are unchanged, byte for byte</li>
             </ul>
           </li>
-          <li>
-            <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Tang Nano 20K bridge</span><span class="chip">FPGA · pins</span></div>
+          <li class="done">
+            <div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Tang Nano 20K bridge</span><span class="chip now">done</span></div>
             <p>The first signal-level bridge: crank and cam wheels as rotary patterns, injector capture and analog outputs, the bridge as the clock, the host-to-bridge protocol and the first fidelity contract. Pulled by open-crank v0.4. Exit: open-crank's Level 2, an engine-ECU firmware that synchronises on the crank and holds speed, within a measured jitter and latency budget.</p>
+            <ul class="pending">
+              <li class="done">open-crank's reference engine ECU, on a NUCLEO-G431KB, synchronises and holds a requested speed in a closed loop through the bridge, with every injection captured (<a href="https://github.com/Open-Heavy-Machinery/open-crank/tree/main/docs/measurements/2026-11-28-hil">the runs</a>)</li>
+              <li class="done">the budget of every hard run, stated for the BL616 link and measured on the board</li>
+              <li class="done">the fidelity contract: a run that asks for more than the bridge guarantees is refused</li>
+              <li class="done">the gateware simulated against the codec in CI, with its own mutations, and built twice to the same bitstream</li>
+              <li>the analog outputs, measured on a board</li>
+              <li class="done">released as <a href="https://github.com/Open-Heavy-Machinery/open-tick/releases/tag/v0.4.0">v0.4.0</a></li>
+            </ul>
           </li>
           <li>
             <div class="tl-head"><span class="tl-ver">v0.5</span><span class="tl-title">Profiles</span><span class="chip">YAML → C</span></div>

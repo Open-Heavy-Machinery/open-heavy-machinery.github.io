@@ -18,7 +18,7 @@
   <meta property="og:image" content="https://open-heavy-machinery.github.io/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Open Heavy Machinery: open-tick v0.3.1, open-crank v0.3.2 and open-rig v0.3, machines that answer back">
+  <meta property="og:image:alt" content="Open Heavy Machinery: open-tick v0.4.0, open-crank v0.4.0 and open-rig v0.3, machines that answer back">
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="stylesheet" href="assets/site.css">
@@ -77,8 +77,8 @@
         <figure class="term" aria-labelledby="board-caption">
           <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>github.com/Open-Heavy-Machinery</span></div>
           <ul class="board">
-            <li><a class="name" href="open-tick/">open-tick</a><span class="ver">v0.3.1</span><span class="state">● done</span><span class="what">One clock, scenarios as data, traces, CAN / CAN FD bridges with transport faults, frame logs, and an oracle that grades by frames and writes its verdicts. The core every project runs on.</span></li>
-            <li><a class="name" href="open-crank/">open-crank</a><span class="ver">v0.3.2</span><span class="state">● done</span><span class="what">A heavy-duty diesel that answers back over J1939: plant, engine ECU, hydraulic load, and the faults to test against. Runs on open-tick.</span></li>
+            <li><a class="name" href="open-tick/">open-tick</a><span class="ver">v0.4.0</span><span class="state">● done</span><span class="what">One clock, scenarios as data, traces, CAN / CAN FD bridges with transport faults, frame logs, an oracle that grades by frames, and a Tang Nano 20K bridge that puts a machine on your microcontroller's pins. The core every project runs on.</span></li>
+            <li><a class="name" href="open-crank/">open-crank</a><span class="ver">v0.4.0</span><span class="state">● done</span><span class="what">A heavy-duty diesel that answers back: over J1939 to your machine controller, and on the pins to your own engine ECU. Plant, hydraulic load, and the faults to test against. Runs on open-tick.</span></li>
             <li><a class="name" href="https://github.com/Open-Heavy-Machinery/open-rig">open-rig</a><span class="ver">v0.3</span><span class="state">● done</span><span class="what">A static browser viewer for open-tick traces: one trace, or two on the same time axis, with the oracle's verdicts drawn over them and the bus beside them, every frame decoded with a DBC, J1939 included.</span></li>
             <li><span class="name">open-robots</span><span class="ver">—</span><span class="state planned">○ future, after open-crank</span><span class="what">DC motors, encoders and IMUs for robot firmware, on open-tick, with no J1939.</span></li>
           </ul>
@@ -116,7 +116,7 @@
         <p class="intro">Each machine is its own project with its own physics and protocols. What they share lives in open-tick, and nothing is moved there until a second machine needs it. <strong>open-crank is the priority.</strong> open-tick grows only when open-crank needs it; sibling applications such as open-robots come later.</p>
         <div class="family">
           <article class="project">
-            <div class="top"><span class="pname">open-tick</span><span class="chip now">v0.3.1 done</span></div>
+            <div class="top"><span class="pname">open-tick</span><span class="chip now">v0.4.0 done</span></div>
             <h3>The beat a simulated machine keeps.</h3>
             <p>Simulated time that never reads a clock, and the bridges that carry a machine's signals to real silicon.</p>
             <ul>
@@ -126,12 +126,14 @@
               <li>an oracle that grades any controller by the frames it sends, and writes its verdicts for viewers</li>
               <li>transport faults: lost, delayed, jittered and corrupted frames, and bus-off</li>
               <li>frame logs: every frame of a run, with the step it belongs to and when it was on the bus</li>
-              <li>next: crank wheels on a Tang Nano 20K's pins</li>
+              <li>a Tang Nano 20K bridge: a 60−2 crank and a cam on your pins, injector pulses captured, the run paced by the bridge's clock</li>
+              <li>a fidelity contract: a run the bridge cannot hold is refused</li>
+              <li>next: profiles, machines described in reviewable files</li>
             </ul>
             <div class="links"><a class="main" href="open-tick/">open-tick</a><a href="https://github.com/Open-Heavy-Machinery/open-tick">GitHub</a></div>
           </article>
           <article class="project">
-            <div class="top"><span class="pname">open-crank</span><span class="chip now">v0.3.2 done</span></div>
+            <div class="top"><span class="pname">open-crank</span><span class="chip now">v0.4.0 done</span></div>
             <h3>A heavy-duty diesel that answers back.</h3>
             <p>Connect your own firmware over J1939 and practise against an engine you could never keep at home.</p>
             <ul>
@@ -139,8 +141,9 @@
               <li>a simulated engine ECU with governor, limits and trips</li>
               <li>a reference controller that runs on an STM32G431 board over a real CAN bus</li>
               <li>your bench checked with one command: build, program and test the board, no CubeIDE</li>
-              <li>fifteen fault and operating scenarios, thirteen numbered safety requirements traced to tests</li>
-              <li>next: Level 2, your firmware as the engine ECU</li>
+              <li>fifteen fault and operating scenarios, fourteen numbered safety requirements traced to tests</li>
+              <li>Level 2: your firmware as the engine ECU, on a 60−2 crank and a cam from open-tick's bridge, fuelled by its own injector pulses</li>
+              <li>next: two engines on one machine</li>
             </ul>
             <div class="links"><a class="main" href="open-crank/">open-crank</a><a href="https://github.com/Open-Heavy-Machinery/open-crank">GitHub</a></div>
           </article>
@@ -164,13 +167,13 @@
       <div class="wrap">
         <div class="kicker">// how it fits</div>
         <h2 id="fit-h">Your microcontroller cannot see the machine. It sees signals.</h2>
-        <p class="intro">Applications bring the physics and the protocol. open-tick keeps time, plays scenarios and carries the signals to your board through a bridge. Today that is a CAN bus; next, the pins themselves.</p>
+        <p class="intro">Applications bring the physics and the protocol. open-tick keeps time, plays scenarios and carries the signals to your board through a bridge. Today that is a CAN bus, or the pins themselves.</p>
         <div class="arch stacked">
           <p class="scroll-hint">Swipe the diagram sideways to see all of it.</p>
           <figure class="diagram">
             <svg viewBox="0 0 720 410" role="img" aria-labelledby="fit-title fit-desc">
               <title id="fit-title">How the projects fit together</title>
-              <desc id="fit-desc">At the top, applications: open-crank, open-robots (planned) and your own. They run on open-tick, which provides the clock, scenarios, traces and drivers. open-tick reaches the device under test through bridges: in-memory and SocketCAN today; a Tang Nano 20K, which works on pins, is planned, and a Raspberry Pi Pico comes later. At the bottom, your microcontroller.</desc>
+              <desc id="fit-desc">At the top, applications: open-crank, open-robots (planned) and your own. They run on open-tick, which provides the clock, scenarios, traces and drivers. open-tick reaches the device under test through bridges: in-memory, SocketCAN and a Tang Nano 20K, which works on pins, today; a Raspberry Pi Pico comes later. At the bottom, your microcontroller.</desc>
               <defs>
                 <marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8b949e"/></marker>
               </defs>
@@ -190,7 +193,7 @@
               <!-- open-tick -->
               <rect class="box-core" x="10" y="108" width="700" height="78" rx="10"/>
               <text class="t" x="28" y="138">open-tick</text>
-              <text class="s" x="28" y="160">one clock · scenarios and player · traces · CAN queues · free-run and paced drivers</text>
+              <text class="s" x="28" y="160">one clock · scenarios and player · traces · CAN queues · free-run, paced and hard drivers</text>
               <text class="m" x="28" y="177">core: ISO C11, any host · host: Linux</text>
               <line class="arrow" x1="95" y1="186" x2="95" y2="218" marker-end="url(#fa)"/>
               <line class="arrow" x1="275" y1="186" x2="275" y2="218" marker-end="url(#fa)"/>
@@ -206,19 +209,19 @@
               <rect class="box-plan" x="370" y="222" width="170" height="64" rx="9"/>
               <text class="t-muted" x="384" y="248">Raspberry Pi Pico</text>
               <text class="plan" x="384" y="270">later · pins, PIO</text>
-              <rect class="box-plan" x="550" y="222" width="160" height="64" rx="9"/>
-              <text class="t-muted" x="564" y="248">Tang Nano 20K</text>
-              <text class="plan" x="564" y="270">planned · pins, FPGA</text>
+              <rect class="box" x="550" y="222" width="160" height="64" rx="9"/>
+              <text class="t" x="564" y="248">Tang Nano 20K</text>
+              <text class="ok" x="564" y="270">v0.4 · pins, FPGA</text>
               <line class="arrow" x1="95" y1="286" x2="95" y2="318" marker-end="url(#fa)"/>
               <line class="arrow" x1="275" y1="286" x2="275" y2="318" marker-end="url(#fa)"/>
               <line class="arrow-int" x1="455" y1="286" x2="455" y2="318" marker-end="url(#fa)"/>
-              <line class="arrow-int" x1="635" y1="286" x2="635" y2="318" marker-end="url(#fa)"/>
+              <line class="arrow" x1="635" y1="286" x2="635" y2="318" marker-end="url(#fa)"/>
               <!-- device under test -->
               <rect class="box-dut" x="10" y="322" width="700" height="78" rx="10"/>
               <text class="t" x="28" y="352">Your controller</text>
               <text class="s" x="28" y="374">device under test · any board, RTOS or language</text>
-              <text class="mh" x="456" y="352">frames on a bus: today</text>
-              <text class="m" x="456" y="374">edges on its pins: next</text>
+              <text class="mh" x="456" y="352">frames on a bus: v0.1</text>
+              <text class="mh" x="456" y="374">edges on its pins: v0.4</text>
             </svg>
           </figure>
           <div class="levels row">
@@ -227,12 +230,12 @@
               <p>Your firmware talks to the machine over CAN, exactly as a crane or vessel controller talks to its engine. <code>vcan</code> on a laptop, or a USB-CAN adapter and a real board.</p>
             </div>
             <div class="level">
-              <h3>On the pins <span class="chip">planned</span></h3>
-              <p>The bridge turns the plant's state into edges your timers and interrupts count: crank and cam wheels on a Tang Nano 20K first, encoders on a Pico when open-robots starts. The plant stays on a CPU; the bridge keeps the timing.</p>
+              <h3>On the pins <span class="chip now">today</span></h3>
+              <p>The bridge turns the plant's state into edges your timers and interrupts count, and captures the pulses your firmware sends back: a 60−2 crank and a cam on a Tang Nano 20K today, encoders on a Pico when open-robots starts. The plant stays on a CPU; the bridge keeps the timing.</p>
             </div>
             <div class="level">
-              <h3>How faithful it is <span class="chip">planned</span></h3>
-              <p>Each machine states what it needs from a bridge, each bridge states what it guarantees, and a run that cannot be faithful is refused instead of passing quietly.</p>
+              <h3>How faithful it is <span class="chip now">today</span></h3>
+              <p>Each machine states what it needs from a bridge, each bridge states what it guarantees, and a run that cannot be faithful is refused instead of passing quietly. Every run on the bridge writes its timing budget, declared and measured.</p>
             </div>
           </div>
         </div>
@@ -267,7 +270,7 @@
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.2.1</span><span class="tl-title">Verdict files</span><span class="chip now">done</span></div><p>The oracle's verdicts as a file: open-rig draws each window, reaction and failure over the trace.</p></li>
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.3</span><span class="tl-title">Transport faults</span><span class="chip now">done</span></div><p>Lost, corrupted and delayed frames, bus-off and jitter, driven by the scenario, for every application. open-crank's fault scenarios run on them.</p></li>
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.3.1</span><span class="tl-title">Frame logs</span><span class="chip now">done</span></div><p>Every frame of a run with two times: the step, which places it on the trace's axis, and when it was on the bus, measured by a clock the file names. open-rig v0.3 shows them.</p></li>
-              <li><div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Tang Nano 20K bridge</span></div><p>Crank and cam wheels, injector capture and analog outputs, the bridge as the clock, and the first fidelity contract. Pulled by open-crank v0.4.</p></li>
+              <li class="done"><div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Tang Nano 20K bridge</span><span class="chip now">done</span></div><p>A 60−2 crank and a cam, six injector captures and analog outputs on the pins, the bridge's oscillator as the clock, a budget of every run, and the first fidelity contract. open-crank's Level 2 runs on it.</p></li>
               <li><div class="tl-head"><span class="tl-ver">v0.5</span><span class="tl-title">Profiles</span></div><p>Machines described in reviewable YAML, compiled to C. Parameters and wiring, never equations. Pulled by open-crank v0.5.</p></li>
               <li><div class="tl-head"><span class="tl-ver">Track R</span><span class="tl-title">Renode virtual-time driver</span></div><p>Firmware in the loop in CI, without a board, in parallel. Pulled by open-crank's Track R.</p></li>
               <li><div class="tl-head"><span class="tl-title">When a sibling starts</span></div><p>open-robots in SIL, a Raspberry Pi Pico bridge and register-mapped slaves. They get a version number when open-robots starts; until then nothing is built.</p></li>
@@ -283,7 +286,8 @@
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.2.2</span><span class="tl-title">Board automation</span><span class="chip now">done</span></div><p>The board built, programmed and tested from the PC with one command, without CubeIDE: a standard bench check anyone can run.</p></li>
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.3.1</span><span class="tl-title">Robustness on the board</span><span class="chip now">done</span></div><p>Transport faults, a corrupted TSC1 refused by its checksum, the engine's DM1 with limp-home, and a watchdog on the board. Thirteen safety requirements, each traced to its tests.</p></li>
               <li class="done"><div class="tl-head"><span class="tl-ver">v0.3.2</span><span class="tl-title">Frame logs and the bus dictionary</span><span class="chip now">done</span></div><p>Every run writes its CAN frames with two times, and the bus contract is a DBC that CI checks against the encoders.</p></li>
-              <li><div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Level 2: your firmware as the engine ECU</span></div><p>Crank and cam signals from open-tick's Tang Nano 20K bridge; fuel from your injector pulses.</p></li>
+              <li class="done"><div class="tl-head"><span class="tl-ver">v0.3.3</span><span class="tl-title">The controller's DM1 and the Level 2 harness</span><span class="chip now">done</span></div><p>The reference controller reports its own faults as DM1, and the wiring to the Tang Nano 20K is checked wire by wire on the board.</p></li>
+              <li class="done"><div class="tl-head"><span class="tl-ver">v0.4</span><span class="tl-title">Level 2: your firmware as the engine ECU</span><span class="chip now">done</span></div><p>Crank and cam signals from open-tick's Tang Nano 20K bridge; fuel from your injector pulses. A reference engine ECU on an STM32G431 synchronises and holds speed against the plant in a closed loop.</p></li>
               <li><div class="tl-head"><span class="tl-ver">v0.5–v0.7</span><span class="tl-title">Two engines, a marine two-stroke, power management</span></div><p>Address claiming, a propeller load and a generator-set bus with a blackout scenario.</p></li>
             </ol>
           </div>
